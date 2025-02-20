@@ -15,25 +15,31 @@ h1 {
 	padding: 10px;
 }
 
+.row {
+	font-size: 30px;
+	text-align: center;
+	align-items: center;
+}
+
 #title {
 	text-align: center;
 	font-weight: bold;
 }
 
-.nearest-train-map {
-	height: 400px;
-	background-color: bisque;
+#custom-header {
+	text-weight: bold;
 }
 
-.cumulative-waittime-row {
-	background-color: bisque;
-	text-align: center;
-	font-size: 30px;
+#nearest-train-map {
+	height: 400px;
+	background-color: bisque !important;
+}
+
+#cumulative-waittime-row {
+	font-size: 34px !important;
 	font-weight: bold;
 }
 
-.status-bar {
+#status-bar {
 	font-size: 22px;
-	text-align: center;
-	align-items: center;
 }
