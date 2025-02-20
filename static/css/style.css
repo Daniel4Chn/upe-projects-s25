@@ -2,6 +2,12 @@
 CSS stylesheet for extra styling outside of Bootstrap.
 */
 
+body {
+	padding-left: 12px;
+	padding-right: 12px;
+	width: auto;
+}
+
 h1 {
 	border: 2px #eee solid;
 	color: black;
@@ -27,6 +33,7 @@ h1 {
 }
 
 .status-bar {
-	font-size: 20px;
+	font-size: 22px;
 	text-align: center;
+	align-items: center;
 }
