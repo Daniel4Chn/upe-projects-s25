@@ -1,0 +1,45 @@
+/*
+CSS stylesheet for extra styling outside of Bootstrap.
+*/
+
+body {
+	padding-left: 12px;
+	padding-right: 12px;
+	width: auto;
+}
+
+h1 {
+	border: 2px #eee solid;
+	color: black;
+	text-align: center;
+	padding: 10px;
+}
+
+.row {
+	font-size: 30px;
+	text-align: center;
+	align-items: center;
+}
+
+#title {
+	text-align: center;
+	font-weight: bold;
+}
+
+#custom-header {
+	font-weight: bold;
+}
+
+#nearest-train-map {
+	height: 400px;
+	background-color: bisque !important;
+}
+
+#cumulative-waittime-row {
+	font-size: 34px !important;
+	font-weight: bold;
+}
+
+#status-bar {
+	font-size: 22px;
+}
