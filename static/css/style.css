@@ -9,7 +9,24 @@ h1 {
 	padding: 10px;
 }
 
-.custom-row {
+#title {
+	text-align: center;
+	font-weight: bold;
+}
+
+.nearest-train-map {
 	height: 400px;
 	background-color: bisque;
+}
+
+.cumulative-waittime-row {
+	background-color: bisque;
+	text-align: center;
+	font-size: 30px;
+	font-weight: bold;
+}
+
+.status-bar {
+	font-size: 20px;
+	text-align: center;
 }
