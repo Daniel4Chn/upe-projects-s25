@@ -1,9 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
+import sqlite3
 
 my_urls = ["http://bu.edu/hub/hub-courses/philosophical-aesthetic-and-historical-interpretation/", "https://www.bu.edu/hub/hub-courses/scientific-and-social-inquiry/", "https://www.bu.edu/hub/hub-courses/quantitative-reasoning/", "https://www.bu.edu/hub/hub-courses/diversity-civic-engagement-and-global-citizenship/", "https://www.bu.edu/hub/hub-courses/communication/", "https://www.bu.edu/hub/hub-courses/intellectual-toolkit/"]
 my_classes = [("cf-hub-area-1", "Critical Thinking"), ("cf-hub-area-2", "Research and Information Literacy"), ("cf-hub-area-3", "Teamwork/Collaboration"), ("cf-hub-area-4", "Creativity/Innovation"), ("cf-hub-area-L", "First-Year Writing Seminar"), ("cf-hub-area-M", "Writing, Research, and Inquiry"),("cf-hub-area-6", "Writing-Intensive Course"), ("cf-hub-area-N", "Oral and/or Signed Communication"), ("cf-hub-area-O", "Digital/Multimedia Expression"), ("cf-hub-area-I", "The Individual in Community"), ("cf-hub-area-J", "Global Citizenship and Intercultural Literacy"), ("cf-hub-area-K", "Ethical Reasoning"), ("cf-hub-area-G", "Quantitative Reasoning I"), ("cf-hub-area-H", "Quantitative Reasoning II"), ("cf-hub-area-D", "Scientific Inquiry I"), ("cf-hub-area-F", "Scientific Inquiry II"), ("cf-hub-area-E", "Social Inquiry I"), ("cf-hub-area-P", "Social Inquiry II"), ("cf-hub-area-A", "Philosophical Inquiry and Life's Meanings"), ("cf-hub-area-B", "Aesthetic Exploration"), ("cf-hub-area-C", "Historical Consciousness")]
+
 courseDict = {}
+
+connection = sqlite3.connect("courses.db")
+cursor = connection.cursor()
 
 def get_html(url):
     response = requests.get(url)
@@ -43,15 +48,43 @@ def initCourse(title, description):
     course["Description"] = description # Set the description of the course to an empty string
     return course
 
+def createTable():
+    cursor.execute("DROP TABLE IF EXISTS COURSE")
+    table = "CREATE TABLE IF NOT EXISTS COURSE ("
+    table += "CourseCode TEXT, "
+    table += "Title TEXT, "
+    table += "Description TEXT, "
+    for _, cat in my_classes:
+        cat_name = cat.replace(" ", "_")
+        cat_name = cat_name.replace("/", "_")
+        cat_name = cat_name.replace("-", "_")
+        cat_name = cat_name.replace(",", "")
+        cat_name = cat_name.replace("'", "")
+        table += cat_name + " INTEGER, "
+    table = table[:-2] + ");"
+    cursor.execute(table)
+
+def insertCourse(course):
+    row = "INSERT INTO COURSE VALUES (?, ?, ?, " + ", ".join(["?" for _ in my_classes]) + ")"
+    values = [course, courseDict[course]["Title"], courseDict[course]["Description"]]
+    for _, cat in my_classes:
+        values.append(courseDict[course][cat])
+    cursor.execute(row,values)
+
 def main():
-    url = my_urls[0]
-    for code, catName in my_classes:
-        scrapeClass(url, code, catName)
+    createTable()
+    connection.commit()
+
+    for url in my_urls:
+        for code, catName in my_classes:
+            scrapeClass(url, code, catName)
+
     for course in courseDict:
-        print(course)
-        for cat in courseDict[course]:
-            print(cat + ": " + str(courseDict[course][cat]))
-        print("\n")
+        insertCourse(course)
+        print(courseDict[course]["Title"] + " inserted into database")
+    
+    connection.commit()
+    connection.close()
 
 if __name__ == "__main__":
     main()
