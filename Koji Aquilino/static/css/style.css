@@ -43,3 +43,7 @@ h1 {
 #status-bar {
 	font-size: 22px;
 }
+
+#current-station-id {
+	font-size: 30px;
+}
