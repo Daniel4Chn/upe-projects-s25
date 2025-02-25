@@ -22,4 +22,4 @@ def update_location():
 
 ##########################
 # STARTUP INSTRUCTIONS:
-# Run Flask webserver with "flask run --host=0.0.0.0 --port=5001", and then navigate to http://<ip address>:5001
+# Run Flask webserver with "flask run --host=0.0.0.0 --port=5000", and then navigate to http://<ip address>:5001
