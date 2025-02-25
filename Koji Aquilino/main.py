@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 import time, math
 
 app = Flask(__name__)
@@ -7,6 +7,18 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+# Called upon successful callback
+@app.route('/update_location', methods=['POST'])
+def update_location():
+    data = request.json
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+
+    return jsonify({ 'status': 'success', "message": "Location received." })
+
+
 
 ##########################
 # STARTUP INSTRUCTIONS:
