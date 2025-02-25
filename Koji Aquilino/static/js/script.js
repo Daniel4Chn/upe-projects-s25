@@ -6,23 +6,35 @@ let handleError = (error) => {
 	document.getElementById("locator-text").innerText = `Failed to retrieve location: ${error}`;
 }
 
-// Run on successful callback
+
+// Run on successful callback: Sends location to backend
 function updateLocation(position) {
-	console.log(position);
-	const lat = position.coords.latitude;
-	const lon = position.coords.longitude;
-	document.getElementById("locator-text").innerText = `Latitude: ${lat}, Longitude: ${lon}`;
-	sendLocationToServer(lat, lon);
-	
-	// Send to backend (Flask)
-	fetch('/update_location', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' }, 
-		body: JSON.stringify({ lat, lon })
+
+	const latitude = position.coords.latitude;
+	const longitude = position.coords.longitude;
+	const accuracy = position.coords.accuracy;
+
+	console.log(`Accuracy: ${accuracy} meters`);
+
+	fetch("/update_location", {
+		method: "POST",
+		headers: { "Content-Type": "application/json"}, 
+		body: JSON.stringify({ latitude: latitude, longitude: longitude, accuracy: accuracy })
 	})
-	.then(response => response.json()) // converts backend response to json format for front end to parse
-	.then(data => console.log("Server Response:", data)) // Handle response from server
-	.catch(error => console.log("Error:", error));
+	.then(response => response.json())
+	.then(data => {
+
+		console.log(data);
+
+		if(data.status === "success") {
+			document.getElementById("locator-text").innerText = data.message;
+		}
+		else {
+			document.getElementById("locator-text").innerText = `Failed to retrieve location: ${data.message}`;
+		}
+
+	})
+	.catch(error => console.error("Error sending data:", error))
 }
 
 
@@ -41,17 +53,8 @@ function trackLocation() {
 	}
 }
 
-// Sends current coordinates to backend
-function sendLocationToServer(lat, lon) {
-	fetch("/update_location", {
-		method: "POST",
-		headers: { "Content-Type": "application/json"}, 
-		body: JSON.stringify({ latitude: lat, longitude: lon })
-	})
-	.then(response => response.json())
-	.then(data => console.log("Server response:", data)) // Data sent by server signalling fetch status
-	.catch(error => console.error("Error sending data:", error))
-}
+
+
 
 // Starts tracking as soon as page loads
 // trackLocation();
