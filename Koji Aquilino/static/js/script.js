@@ -1,16 +1,21 @@
 "use strict"
 
 // Handles API errors
-let handleError = (error) => console.error("Error getting location:", error);
+let handleError = (error) => {
+	console.error("Error getting location:", error);
+	document.getElementById("locator-text").innerText = `Failed to retrieve location: ${error}`;
+}
 
 // Run on successful callback
 function updateLocation(position) {
+	console.log(position);
 	const lat = position.coords.latitude;
 	const lon = position.coords.longitude;
 	document.getElementById("locator-text").innerText = `Latitude: ${lat}, Longitude: ${lon}`;
+	sendLocationToServer(lat, lon);
 	
 	// Send to backend (Flask)
-	fetch('/', {
+	fetch('/update_location', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' }, 
 		body: JSON.stringify({ lat, lon })
@@ -20,10 +25,12 @@ function updateLocation(position) {
 	.catch(error => console.log("Error:", error));
 }
 
-// Tracks location with .watchPosition() 
+
+// Tracks location with .watchPosition()
 function trackLocation() {
 	if("geolocation" in navigator) {
-		navigator.geolocation.watchPosition(updateLocation, handleError, {
+		// navigator.geolocation.watchPosition(updateLocation, handleError, {
+		navigator.geolocation.getCurrentPosition(updateLocation, handleError, {
 			enableHighAccuracy: true, // Precise location data
 			maximumAge: 10000, // 10 seconds cached location
 			timeout: 5000 // 5 seconds to retrieve before timeout
@@ -34,7 +41,7 @@ function trackLocation() {
 	}
 }
 
-
+// Sends current coordinates to backend
 function sendLocationToServer(lat, lon) {
 	fetch("/update_location", {
 		method: "POST",
@@ -47,5 +54,8 @@ function sendLocationToServer(lat, lon) {
 }
 
 // Starts tracking as soon as page loads
-trackLocation();
+// trackLocation();
+
+// Alternatively updates location every 3 seconds
+setInterval(trackLocation, 3000);
 

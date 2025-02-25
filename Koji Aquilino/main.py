@@ -16,6 +16,8 @@ def update_location():
     latitude = data.get('latitude')
     longitude = data.get('longitude')
 
+    print(f"Latitude: {latitude}, Longitude: {longitude}")
+
     return jsonify({ 'status': 'success', "message": "Location received." })
 
 
