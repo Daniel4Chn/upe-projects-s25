@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from geopy.geocoders import Nominatim
 from Station import Station
 import requests
+import logging
 import certifi, ssl # Ensures usage of updated CA certificates for SSL connections with requests
 import os
 
@@ -24,6 +25,8 @@ def startup():
     global first_call
 
     if first_call:
+        logging.basicConfig(filename='train_tracker_status.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
         get_green_line_stops()
         first_call = False
     else:
@@ -42,7 +45,7 @@ def update_location():
     latitude = data.get('latitude')
     longitude = data.get('longitude')
 
-    print(f"Accuracy: Within {data.get('accuracy')} meters")
+    logging.info(f"Accuracy: Within {data.get('accuracy')} meters")
 
     return get_address(latitude, longitude)
 
@@ -90,7 +93,7 @@ def get_green_line_stops():
         first_call = False
 
     except requests.exceptions.RequestException as e:
-        print(f"Error: Recevied status code {response.status_code} from MBTA API")
+        logging.error(f"Error: Recevied status code {response.status_code} from MBTA API")
         return jsonify({ "status": "error", "message": "Failed to retrieve stops"}), 500
 
 
