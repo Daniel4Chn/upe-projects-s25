@@ -29,6 +29,10 @@ def startup():
 
         get_green_line_stops()
         first_call = False
+
+        for station in stations:
+            print(station)     
+
     else:
         pass
 
@@ -77,6 +81,10 @@ def get_green_line_stops():
     global stations
 
     try:
+        # Ensures valid API key
+        if API_KEY == None:
+            raise Exception
+
         # Ensure usage of certifi for SSL Verification
         response = requests.get(URL, verify=certifi.where())
         response.raise_for_status() # Raises error for bad reponse (4xx or 5xx range)
@@ -92,10 +100,13 @@ def get_green_line_stops():
         
         first_call = False
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException as re:
         logging.error(f"Error: Recevied status code {response.status_code} from MBTA API")
         return jsonify({ "status": "error", "message": "Failed to retrieve stops"}), 500
-
+    
+    except Exception as e:
+        logging.error(f"Error: MBTA_API_KEY is an empty environmental variable")
+        return jsonify({ "status": "error", "message": "Failed to retrieve MBTA API key"}), 500
 
 
 
