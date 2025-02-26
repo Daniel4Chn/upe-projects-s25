@@ -41,8 +41,8 @@ function updateLocation(position) {
 // Tracks location with .watchPosition()
 function trackLocation() {
 	if("geolocation" in navigator) {
-		// navigator.geolocation.watchPosition(updateLocation, handleError, {
-		navigator.geolocation.getCurrentPosition(updateLocation, handleError, {
+		navigator.geolocation.watchPosition(updateLocation, handleError, {
+		// navigator.geolocation.getCurrentPosition(updateLocation, handleError, {
 			enableHighAccuracy: true, // Precise location data
 			maximumAge: 10000, // 10 seconds cached location
 			timeout: 5000 // 5 seconds to retrieve before timeout
@@ -56,9 +56,11 @@ function trackLocation() {
 
 
 
-// Starts tracking as soon as page loads
-// trackLocation();
+
 
 // Alternatively updates location every 5 seconds
-setInterval(trackLocation, 5000);
+// setInterval(trackLocation, 5000);
+
+// Starts tracking as soon as page loads
+trackLocation();
 
