@@ -14,8 +14,6 @@ function updateLocation(position) {
 	const longitude = position.coords.longitude;
 	const accuracy = position.coords.accuracy;
 
-	console.log(`Accuracy: ${accuracy} meters`);
-
 	fetch("/update_location", {
 		method: "POST",
 		headers: { "Content-Type": "application/json"}, 
@@ -27,6 +25,7 @@ function updateLocation(position) {
 		console.log(data);
 
 		if(data.status === "success") {
+			console.log(data.message)
 			document.getElementById("locator-text").innerText = data.message;
 		}
 		else {
@@ -41,8 +40,8 @@ function updateLocation(position) {
 // Tracks location with .watchPosition()
 function trackLocation() {
 	if("geolocation" in navigator) {
-		navigator.geolocation.watchPosition(updateLocation, handleError, {
-		// navigator.geolocation.getCurrentPosition(updateLocation, handleError, {
+		// navigator.geolocation.watchPosition(updateLocation, handleError, {
+		navigator.geolocation.getCurrentPosition(updateLocation, handleError, {
 			enableHighAccuracy: true, // Precise location data
 			maximumAge: 10000, // 10 seconds cached location
 			timeout: 5000 // 5 seconds to retrieve before timeout
@@ -59,7 +58,7 @@ function trackLocation() {
 
 
 // Alternatively updates location every 5 seconds
-// setInterval(trackLocation, 5000);
+setInterval(trackLocation, 5000);
 
 // Starts tracking as soon as page loads
 trackLocation();
