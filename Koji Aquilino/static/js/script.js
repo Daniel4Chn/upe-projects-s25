@@ -59,6 +59,6 @@ function trackLocation() {
 // Starts tracking as soon as page loads
 // trackLocation();
 
-// Alternatively updates location every 3 seconds
-setInterval(trackLocation, 3000);
+// Alternatively updates location every 5 seconds
+setInterval(trackLocation, 5000);
 

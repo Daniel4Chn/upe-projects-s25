@@ -1,9 +1,33 @@
 from flask import Flask, render_template, request, jsonify
 from geopy.geocoders import Nominatim
-import time, math
+from Station import Station
+import requests
+import certifi, ssl # Ensures usage of updated CA certificates for SSL connections with requests
+import os
 
 app = Flask(__name__)
-geolocator = Nominatim(user_agent="boston_transit_tracker")
+API_KEY = os.getenv('MBTA_API_KEY')
+URL = f"https://api-v3.mbta.com/stops?filter[route]=Green-B&api_key={API_KEY}"
+OPEN_MAP_URL = url = "https://nominatim.openstreetmap.org/reverse?lat=42.3489153&lon=-71.1009455&format=json&addressdetails=1"
+
+# Creates a custom SSL context using certifi
+SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
+geolocator = Nominatim(user_agent="boston_transit_tracker", ssl_context=SSL_CONTEXT)
+
+# Stores a list of Station objects representing each stop on the Green Line
+stations = []
+first_call = True
+
+
+@app.before_request
+def startup():
+    global first_call
+
+    if first_call:
+        get_green_line_stops()
+        first_call = False
+    else:
+        pass
 
 
 @app.route('/')
@@ -42,6 +66,35 @@ def get_address(lat, lon):
     
     except Exception as e:
         return jsonify({ "status": "error", "message": str(e)}), 500
+    
+
+
+
+def get_green_line_stops():
+    global stations
+
+    try:
+        # Ensure usage of certifi for SSL Verification
+        response = requests.get(URL, verify=certifi.where())
+        response.raise_for_status() # Raises error for bad reponse (4xx or 5xx range)
+        stops = response.json()
+
+        for stop in stops['data']:
+            stations.append(Station(stop['attributes']['name'],
+                                    stop['attributes']['latitude'],
+                                    stop['attributes']['longitude']))
+
+        if len(stations) == 0:
+            raise requests.exceptions.RequestException
+        
+        first_call = False
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error: Recevied status code {response.status_code} from MBTA API")
+        return jsonify({ "status": "error", "message": "Failed to retrieve stops"}), 500
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
