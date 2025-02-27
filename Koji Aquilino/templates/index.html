@@ -23,49 +23,26 @@
 
     <!-- Cumulative Waittime -->
     <div class="row" id="cumulative-waittime-row">
-        <div class="p-3 p-r-0 border bg-light"><span id="custom-header">Time Waited: </span><span id="cumulative-waittime">00:00</span></div>
+        <div class="p-3 p-r-0 border bg-light"><span class="custom-header">Time Waited: </span><span id="cumulative-waittime">00:00</span></div>
     </div>
 
     <!-- Status Bar (Current station, current wait time, how many stops away the next train is) -->
     <div class="row mt-2" id="status-bar">
         <div class="col-sm-12 col-md-3">
-            <div class="nearest-train border bg-light"><span id="nearest-train-stops">#</span> stops away</div>
+            <div class="nearest-train border bg-light"><span id="nearest-train-stops"></span>Enter a station...</div>
         </div>
 
         <div class="col-sm-12 col-md-6">
-            <div class="border bg-light" id="current-station-id"> <span id="custom-header current-station">Waiting for Location...</span></div>
+            <div class="border bg-light" id="current-station-id">
+                <span class="custom-header" id="station-header"></span>
+                <span id="station-status">Waiting for Location...</span>
+            </div>
         </div>
 
         <div class="col-sm-12 col-md-3">
             <div class="border bg-light"><span id="custom-header">Current Waiting Time: </span><span id="current-waittime">00:00</span></div>
         </div>
     </div>
-
-    <div class="row mt-2" id="temp-location-retriever">
-        <div class="col-sm-12 col-md-12">
-            <div class="border bg-light p-3" id="locator-text">Waiting for Location...</div>
-        </div>
-    </div>
-
-    
-
-
-
-    <!-- Test HTML for learning Bootstrap: Can add below to experiment -->
-    <!--
-        <div class="row custom-row justify-content-center align-items-center text-center">
-            <div class="col-sm-12 col-md-4">
-                <div class="p-3 border bg-light">Col 1</div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-                <div class="p-3 border bg-light">Clicks: <span id="counter">0</span></div>
-            </div>
-        </div>
-
-        <div class="row button-increment-row">
-            <button id="Btn-inc" class="btn btn-danger">Click Here</button>
-        </div>
-    -->
 
     <!-- Load Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

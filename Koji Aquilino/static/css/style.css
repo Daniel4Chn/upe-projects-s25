@@ -26,7 +26,7 @@ h1 {
 	font-weight: bold;
 }
 
-#custom-header {
+.custom-header {
 	font-weight: bold;
 }
 
@@ -42,6 +42,10 @@ h1 {
 
 #status-bar {
 	font-size: 22px;
+}
+
+#station-status {
+	font-weight: normal;
 }
 
 #current-station-id {

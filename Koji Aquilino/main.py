@@ -77,6 +77,7 @@ def update_location():
     '''
 
     logging.info(f"Retrieved location at {latitude}, {longitude} - Accuracy: within {data.get('accuracy')} meters")
+
     return jsonify({ "status": "success", "message": (latitude, longitude)})
     
 
@@ -134,13 +135,36 @@ def get_station_distance(lat, long, station):
 
 
 
+# Gets and sends the nearest station to the user's current location to the frontend
+@app.route('/update_nearest_station')
+def get_nearest_station():
+    try:
+        min_distance = get_station_distance(latitude, longitude, stations[0])
+        nearest_station = stations[0]
+
+        for i in range(1, len(stations)):
+            current_station_distance = get_station_distance(latitude, longitude, stations[i])
+
+            if current_station_distance < min_distance:
+                min_distance = current_station_distance
+                nearest_station = stations[i]
+
+        return jsonify({ "status": "success", "message": (min_distance, nearest_station.getName()) })
+   
+    except Exception as e:
+
+        logging.error("Failed to retrieve nearest station")
+        return jsonify({ "status": "error", "message": "failed to retrieve nearest station" })
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
 ##########################
 # STARTUP INSTRUCTIONS:
-# Run Flask webserver with "flask run", and then navigate to http://<ip address>:5000,
-# For remote access, run "ngrok http 5000" to securely expose the local server to the internet
+# Run Flask webserver with "flask run", and then navigate to http://<ip address>:5001,
+# For remote access, run "ngrok http --url=relevant-dashing-porpoise.ngrok-free.app 5001" to securely expose the local server to the internet
 
 
 
