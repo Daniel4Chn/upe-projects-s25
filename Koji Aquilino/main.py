@@ -38,10 +38,10 @@ def startup():
 
         # Resets logging file
         try:
-            open('train_tracker_status.log', 'w').close()
+            open('app_status.log', 'w').close()
         except Exception as e:
             pass
-        logging.basicConfig(filename='train_tracker_status.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.basicConfig(filename='app_status.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
         get_green_line_stops()
         first_call = False
@@ -148,6 +148,8 @@ def get_nearest_station():
             if current_station_distance < min_distance:
                 min_distance = current_station_distance
                 nearest_station = stations[i]
+
+        logging.info(f"Retrieved nearest station - {nearest_station.getName()} at {min_distance} meters away")
 
         return jsonify({ "status": "success", "message": (min_distance, nearest_station.getName()) })
    
