@@ -24,6 +24,14 @@ function updateLocation(position) {
 
 		if(data.status === "success") {
 			updateNearestStation();
+
+			if(isAtStation) {
+				updateNextTrainPrediction();
+			}
+			else {
+				document.getElementById("nearest-train").innerText = "...";
+				document.getElementById("nearest-train-stops").innerText = "";
+			}
 		}
 		else {
 			throw GeolocationPositionError;
@@ -71,7 +79,16 @@ function updateNearestStation() {
 }
 
 // Fetches and updates the nearest train predictions for next arrival
-function updateNextTrainPrediction() { return; }
+function updateNextTrainPrediction() {
+	fetch("/update_next_train_prediction")
+	.then(response => response.json())
+	.then(data => {
+		document.getElementById("nearest-train").innerText = "Next train: ";
+		document.getElementById("nearest-train-stops").innerText = data.message;
+	})
+	.catch(error => console.error("Error retrieving train predictions:", error));
+
+}
 
 
 // Alternatively updates location every 5 seconds

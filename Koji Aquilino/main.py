@@ -12,7 +12,6 @@ app = Flask(__name__)
 nearest_station_id = None
 API_KEY = os.getenv('MBTA_API_KEY')
 URL_STOPS = f"https://api-v3.mbta.com/stops?filter[route]=Green-B&api_key={API_KEY}"
-URL_PREDICTION = f"https://api-v3.mbta.com/predictions?filter[stop]={nearest_station_id}&sort=departure_time&api_key={API_KEY}"
 # OPEN_MAP_URL = "https://nominatim.openstreetmap.org/reverse?lat=42.3489153&lon=-71.1009455&format=json&addressdetails=1"
 
 # Creates a custom SSL context using certifi - used to geolocate address from coordinates
@@ -141,6 +140,8 @@ def get_station_distance(lat, long, station):
 # Gets and sends the nearest station to the user's current location to the frontend
 @app.route('/update_nearest_station')
 def get_nearest_station():
+    global nearest_station_id
+
     try:
         min_distance = get_station_distance(latitude, longitude, stations[0])
         nearest_station = stations[0]
@@ -151,6 +152,7 @@ def get_nearest_station():
             if current_station_distance < min_distance:
                 min_distance = current_station_distance
                 nearest_station = stations[i]
+                nearest_station_id = nearest_station.getID()
 
         logging.info(f"Retrieved nearest station - {nearest_station.getID()}: {nearest_station.getName()} at {min_distance} meters away")
 
@@ -161,19 +163,30 @@ def get_nearest_station():
         logging.error("Failed to retrieve nearest station")
         return jsonify({ "status": "error", "message": "failed to retrieve nearest station" })
 
+
+
 @app.route('/update_next_train_prediction')
 def get_next_train():
+
+    vehicle_id = None
     
     try:
         if API_KEY is None:
             raise ReferenceError
-    
-        response = requests.get(URL_PREDICTION)
-        response.raise_for_status()
-        prediction_data = response.json()
 
-        return jsonify({ "status": "success", "message": prediction_data['data']['attributes']['status'] }), 200
+        response = requests.get(f"https://api-v3.mbta.com/predictions?filter[stop]={nearest_station_id}&sort=departure_time&include=vehicle&api_key={API_KEY}")
+        response.raise_for_status()
+        vehicle_id_data = response.json()
+
+        print(vehicle_id_data)
+
+
+        return jsonify({ "status": "success", "message": vehicle_id_data }), 200
     
+    except requests.exceptions.RequestException as request_error:
+        logging.error(f"Recevied status code {response.status_code} from MBTA API")
+        return jsonify({ "status": "error", "message": "Failed to retrieve train predictions"}), 500
+
     except ReferenceError as re:
         logging.error("Failed to retrieve MBTA_API_KEY environmental variable")
         return jsonify({ "status": "error", "message": "Failed to retrieve API key from local machine"}), 500
