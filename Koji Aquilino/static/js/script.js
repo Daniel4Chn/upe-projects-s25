@@ -1,7 +1,7 @@
 "use strict"
 
 const minimumDistanceThreshold = 10; // meters
-let isAtStation = False;
+let isAtStation = false;
 
 // Handles API errors
 let handleError = (error) => console.error("Error getting location:", error);
