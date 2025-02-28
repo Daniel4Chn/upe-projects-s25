@@ -9,8 +9,10 @@ import logging
 import os
 
 app = Flask(__name__)
+nearest_station_id = None
 API_KEY = os.getenv('MBTA_API_KEY')
-URL = f"https://api-v3.mbta.com/stops?filter[route]=Green-B&api_key={API_KEY}"
+URL_STOPS = f"https://api-v3.mbta.com/stops?filter[route]=Green-B&api_key={API_KEY}"
+URL_PREDICTION = f"https://api-v3.mbta.com/predictions?filter[stop]={nearest_station_id}&sort=departure_time&api_key={API_KEY}"
 # OPEN_MAP_URL = "https://nominatim.openstreetmap.org/reverse?lat=42.3489153&lon=-71.1009455&format=json&addressdetails=1"
 
 # Creates a custom SSL context using certifi - used to geolocate address from coordinates
@@ -91,14 +93,15 @@ def get_green_line_stops():
         if API_KEY is None:
             raise ReferenceError
 
-        response = requests.get(URL)
+        response = requests.get(URL_STOPS)
         response.raise_for_status() # Raises error for bad reponse (4xx or 5xx range)
         stops = response.json()
 
         for stop in stops['data']:
             stations.append(Station(stop['attributes']['name'],
                                     stop['attributes']['latitude'],
-                                    stop['attributes']['longitude']))
+                                    stop['attributes']['longitude'],
+                                    stop['id']))
 
         if len(stations) == 0:
             raise requests.exceptions.RequestException
@@ -149,7 +152,7 @@ def get_nearest_station():
                 min_distance = current_station_distance
                 nearest_station = stations[i]
 
-        logging.info(f"Retrieved nearest station - {nearest_station.getName()} at {min_distance} meters away")
+        logging.info(f"Retrieved nearest station - {nearest_station.getID()}: {nearest_station.getName()} at {min_distance} meters away")
 
         return jsonify({ "status": "success", "message": (min_distance, nearest_station.getName()) })
    
@@ -157,6 +160,29 @@ def get_nearest_station():
 
         logging.error("Failed to retrieve nearest station")
         return jsonify({ "status": "error", "message": "failed to retrieve nearest station" })
+
+@app.route('/update_next_train_prediction')
+def get_next_train():
+    
+    try:
+        if API_KEY is None:
+            raise ReferenceError
+    
+        response = requests.get(URL_PREDICTION)
+        response.raise_for_status()
+        prediction_data = response.json()
+
+        return jsonify({ "status": "success", "message": prediction_data['data']['attributes']['status'] }), 200
+    
+    except ReferenceError as re:
+        logging.error("Failed to retrieve MBTA_API_KEY environmental variable")
+        return jsonify({ "status": "error", "message": "Failed to retrieve API key from local machine"}), 500
+    
+    except Exception as e:
+        logging.error(f"Failed to retrieve train predictions: {e}")
+        return jsonify({ "status": "error", "message": "An unknown error occurred when fetching train predictions" }), 500
+
+
 
 
 

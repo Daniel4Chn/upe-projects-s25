@@ -70,6 +70,8 @@ function updateNearestStation() {
 	.catch(error => console.error("Error retrieving station data:", error));
 }
 
+// Fetches and updates the nearest train predictions for next arrival
+function updateNextTrainPrediction() { return; }
 
 
 // Alternatively updates location every 5 seconds
