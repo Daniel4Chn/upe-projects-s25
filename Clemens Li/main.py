@@ -1,11 +1,10 @@
 from flask import Flask, render_template, jsonify, request
 import gradescopeapi
 from gradescopeapi.classes.connection import GSConnection
+import analysis as an
 
 email = ""
 password = ""
-courses = []
-assignments = []
 
 app = Flask(__name__)
 
@@ -18,18 +17,12 @@ def receive_login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
-    get_data(email, password)
+    connection = GSConnection()
+    connection.login(email, password)
+    an.get_data(connection)
+    an.categorize_data(connection)
     return jsonify({"status": "success", "redirect": "/home", "message": (email, password)})
 
 @app.route("/home")
 def home_screen():
     return render_template("home.html", course_data=courses, assignment_data=assignments)
-
-def get_data(email, password):
-    global courses, assignments
-    connection = GSConnection()
-    connection.login(email, password)
-    courses = connection.account.get_courses()["student"].keys()
-    for course in courses:
-        assignments.append(connection.account.get_assignments(course))
-    pass
