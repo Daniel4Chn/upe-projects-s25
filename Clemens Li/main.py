@@ -5,7 +5,7 @@ from gradescopeapi.classes.connection import GSConnection
 email = ""
 password = ""
 courses = []
-grades = []
+assignments = []
 
 app = Flask(__name__)
 
@@ -23,10 +23,13 @@ def receive_login():
 
 @app.route("/home")
 def home_screen():
-    return render_template("home.html")
+    return render_template("home.html", course_data=courses, assignment_data=assignments)
 
 def get_data(email, password):
+    global courses, assignments
     connection = GSConnection()
     connection.login(email, password)
-    courses = connection.account.get_courses()
+    courses = connection.account.get_courses()["student"].keys()
+    for course in courses:
+        assignments.append(connection.account.get_assignments(course))
     pass
