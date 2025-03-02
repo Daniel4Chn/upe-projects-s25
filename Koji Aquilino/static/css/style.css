@@ -16,7 +16,7 @@ h1 {
 }
 
 .row {
-	font-size: 30px;
+	font-size: 20px;
 	text-align: center;
 	align-items: center;
 }
@@ -31,17 +31,17 @@ h1 {
 }
 
 #nearest-train-map {
-	height: 400px;
+	height: 450px;
 	background-color: bisque !important;
 }
 
 #cumulative-waittime-row {
-	font-size: 34px !important;
+	font-size: 30px !important;
 	font-weight: bold;
 }
 
 #status-bar {
-	font-size: 22px;
+	font-size: 20px;
 }
 
 #station-status {
@@ -49,5 +49,5 @@ h1 {
 }
 
 #current-station-id {
-	font-size: 30px;
+	font-size: 27px;
 }

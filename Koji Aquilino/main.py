@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, abort
 # from geopy.geocoders import Nominatim
 # import certifi, ssl # Ensures usage of updated CA certificates for SSL connections with requests
 from Station import Station
+from datetime import datetime, timezone
 import geopy.distance
 import requests
 import logging
@@ -42,8 +43,10 @@ def startup():
             open('app_status.log', 'w').close()
         except Exception as e:
             pass
-        logging.basicConfig(filename='app_status.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
+        logging.basicConfig(filename='app_status.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        
+        log_rate_limits_mbta()
         get_green_line_stops()
         first_call = False
 
@@ -70,7 +73,7 @@ def update_location():
 
     # Returns status code 400 if failed to retrieve location, or received empty data
     if latitude is None or longitude is None:
-        return jsonify({ "status": "error", "message": "Failed to retrieve latitude and/or longitude"}), 400
+        abort(400, description="Failed to retrieve latitude and/or longitude")
     
     '''
     for station in stations:
@@ -79,7 +82,7 @@ def update_location():
 
     logging.info(f"Retrieved location at {latitude}, {longitude} - Accuracy: within {data.get('accuracy')} meters")
 
-    return jsonify({ "status": "success", "message": (latitude, longitude)})
+    return jsonify({ "status": "success", "message": (latitude, longitude)}), 200
     
 
 
@@ -116,24 +119,10 @@ def get_green_line_stops():
         return jsonify({ "status": "error", "message": "Failed to retrieve MBTA API key"}), 500
     
     except Exception as e:
-        logging.error(f"An unknown error occurred: {e}")
+        logging.error(f"An unknown error occurred: {type(e).__name__}: {e}")
 
 
-# Calculates the distance between the current coordinates and a station's coordinates.
-# Returns the distance in meters
-def get_station_distance(lat, long, station):
 
-    try:
-        if type(station) is not Station:
-            raise TypeError
-
-        coords_1 = (lat, long)
-        coords_2 = (station.getLatitude(), station.getLongitude())
-
-        return geopy.distance.geodesic(coords_1, coords_2).km * 1000
-    
-    except TypeError as e:
-        logging.error(f"Passed incompatible Type: Type must be of Station class: {e}")
 
 
 
@@ -156,44 +145,75 @@ def get_nearest_station():
 
         logging.info(f"Retrieved nearest station - {nearest_station.getID()}: {nearest_station.getName()} at {min_distance} meters away")
 
-        return jsonify({ "status": "success", "message": (min_distance, nearest_station.getName()) })
+        return jsonify({ "status": "success", "message": (min_distance, nearest_station.getName()) }), 200
+       
    
     except Exception as e:
 
         logging.error("Failed to retrieve nearest station")
-        return jsonify({ "status": "error", "message": "failed to retrieve nearest station" })
+        abort(500, description="Failed to retrieve nearest station")
 
 
 
-@app.route('/update_next_train_prediction')
+@app.route('/update_next_train_prediction', methods=['POST'])
 def get_next_train():
-
     vehicle_id = None
+    direction_id = None
+
+    data = request.json
+    direction = data.get('direction')
     
     try:
         if API_KEY is None:
             raise ReferenceError
+        
+        if str(direction).lower() == "westbound":
+            direction_id = 0
+        elif str(direction).lower() == "eastbound":
+            direction_id = 1
+        else:
+            abort(400, description="Invalid direction parameter: must be 'westbound' or 'eastbound'")
 
-        response = requests.get(f"https://api-v3.mbta.com/predictions?filter[stop]={nearest_station_id}&sort=departure_time&include=vehicle&api_key={API_KEY}")
+        response = requests.get(f"https://api-v3.mbta.com/predictions?filter[stop]={nearest_station_id}&filter[route]=Green-B&filter[direction_id]={direction_id}&sort=arrival_time&api_key={API_KEY}")
         response.raise_for_status()
-        vehicle_id_data = response.json()
 
-        print(vehicle_id_data)
+        predictions = response.json()['data']
+        logging.info(f"Retrieved {len(predictions)} predictions for {nearest_station_id}")
 
+        for prediction in predictions:
+            if('relationships' in prediction and
+               'vehicle' in prediction['relationships'] and
+               prediction['relationships']['vehicle']['data']):
+            
+                vehicle_id = prediction['relationships']['vehicle']['data']['id']
+                train_station = get_station_from_train(vehicle_id)
 
-        return jsonify({ "status": "success", "message": vehicle_id_data }), 200
+                print(f"direction: {data.get('direction')} - {train_station}")
+
+                if train_station:
+                    stops = get_stops_between_stations(train_station, nearest_station_id)
+                    return jsonify({ "status": "success", "message": stops }), 200
+
+        abort(404, description="No approaching trains found")
     
     except requests.exceptions.RequestException as request_error:
         logging.error(f"Recevied status code {response.status_code} from MBTA API")
-        return jsonify({ "status": "error", "message": "Failed to retrieve train predictions"}), 500
-
+        abort(500, description="Failed to retrieve train predictions")
     except ReferenceError as re:
         logging.error("Failed to retrieve MBTA_API_KEY environmental variable")
-        return jsonify({ "status": "error", "message": "Failed to retrieve API key from local machine"}), 500
-    
+        abort(500, description="Failed to retrieve API key from local machine")
+
+    except TypeError as te:
+        logging.error("Failed to retrieve train locations: trains are offline")
+        abort(503, description="Trains offline")
+
+    except ValueError as ve:
+        logging.error("Input an invalid direction when calling the function")
+        abort(400, description="Posted invalid parameters for the function to handle")
+
     except Exception as e:
-        logging.error(f"Failed to retrieve train predictions: {e}")
-        return jsonify({ "status": "error", "message": "An unknown error occurred when fetching train predictions" }), 500
+        logging.error(f"Failed to retrieve train predictions: {type(e).__name__}: {e}")
+        abort(500, description="An unknown error occurred when fetching train predictions")
 
 
 
@@ -201,6 +221,164 @@ def get_next_train():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+# Calculates the distance between the current coordinates and a station's coordinates.
+# Returns the distance in meters
+def get_station_distance(lat, long, station):
+
+    try:
+        if type(station) is not Station:
+            raise TypeError
+
+        coords_1 = (lat, long)
+        coords_2 = (station.getLatitude(), station.getLongitude())
+
+        return geopy.distance.geodesic(coords_1, coords_2).km * 1000
+    
+    except TypeError as e:
+        logging.error(f"Passed incompatible Type: Type must be of Station class: {type(e).__name__}: {e}")
+
+
+
+# Retrieves the corresponding station a train is at
+def get_station_from_train(vehicle_id):
+   
+    stop_id = None
+    parent_id = None
+    trip_id = None
+    
+    logging.info(f"Referencing train - {vehicle_id}")
+
+    try:
+        response = requests.get(f"https://api-v3.mbta.com/vehicles/{vehicle_id}?api_key={API_KEY}")
+        response.raise_for_status()
+
+        data = response.json()['data']
+        attributes = data.get('attributes', {})
+        current_status = attributes.get('current_status')
+
+        logging.debug(f"Vehicle data - {data['type']}")
+        logging.info(f"Train status: {current_status}")
+
+        # Direct stop relationship
+        if('relationships' in data and
+           'stop' in data['relationships'] and
+           'data' in data['relationships']['stop'] and
+           data['relationships']['stop']['data']):
+            
+            stop_id = data['relationships']['stop']['data']['id'] # child stop id of current station: convert to parent
+
+           # stop_id is already a parent station, returns
+            if stop_id.startswith('place-'):
+                return stop_id
+            
+
+            # Retrieving parent station from child stop id
+            parent_station_response = requests.get(f"https://api-v3.mbta.com/stops/{stop_id}?api_key={API_KEY}")
+            parent_station_response.raise_for_status()
+
+            parent_data = parent_station_response.json()['data']
+
+            if('relationships' in parent_data and
+               'parent_station' in parent_data['relationships'] and
+               'data' in parent_data['relationships']['parent_station'] and
+               parent_data['relationships']['parent_station']['data']):
+                
+                parent_id = parent_data['relationships']['parent_station']['data']['id']
+                logging.info(f"Converted stop ID {stop_id} to parent station ID {parent_id}")
+                return parent_id
+
+        # Trip data with next stop
+        if('relationships' in data and
+           'trip' in data['relationships'] and
+           'data' in data['relationships']['trip'] and 
+           data['relationships']['trip']['data']):
+            
+            trip_id = data['relationships']['trip']['data']['id']
+            route = "Green-B"
+            direction_id = attributes.get('direction_id')
+
+
+            # Getting the stops along the trip
+            trip_response = requests.get(f"https://api-v3.mbta.com/trips/{trip_id}/stops?api_key={API_KEY}")
+            trip_response.raise_for_status()
+
+            trip_data = trip_response.json()
+            if 'data' in trip_data and len(trip_data['data']) > 0:
+                current_sequence = attributes.get('current_stop_sequence', 0)
+                next_sequence = current_sequence + 1
+
+                for stop in trip_data['data']:
+                    if stop['attributes']['stop_sequence'] == next_sequence:
+                        return stop['relationships']['stop']['data']['id'] # stop_id of next station
+        
+
+        logging.error("Could not determine the current or nearest stop for vehicle")
+        return None
+
+
+    except requests.exceptions.RequestException as request_error:
+        if hasattr(request_error, 'response') and request_error.response is not None:
+            status_code = request_error.response.status_code
+        else:
+            status_code = "unknown"
+
+        logging.error(f"Received status code {status_code} from MBTA API")
+        return None
+
+    except ReferenceError as re:
+        logging.error("Failed to retrieve MBTA_API_KEY environmental variable")
+        return None
+    
+    except Exception as e:
+        logging.error(f"An unknown error occurred when retrieving current train location: {type(e).__name__}: {e}")
+        return None
+
+
+
+
+# Returns the number of stops between stations
+def get_stops_between_stations(station_one, station_two):
+    
+    station_one_number = None
+    station_two_number = None
+
+    # Finding the value of station one
+    for i in range(len(stations)):
+        if stations[i].getID() == station_one:
+            station_one_number = i
+            break
+
+    # Finding the value of station two
+    for j in range(len(stations)):
+        if stations[j].getID() == station_two:
+            station_two_number = j
+            break
+
+
+    return abs(station_one_number - station_two_number)
+
+
+
+# Retrieve rate limits and rate reset
+def log_rate_limits_mbta():
+
+    response = requests.get(f"https://api-v3.mbta.com/routes?api_key={API_KEY}")
+
+    logging.info(f"MBTA - Rate Limit Remaining: {response.headers.get('x-ratelimit-remaining')}")
+
+    try:
+        raw_reset_time = (int)(response.headers.get('x-ratelimit-reset'))
+
+        if raw_reset_time:
+            logging.info(f"MBTA - Rate Limit Resets at: {datetime.fromtimestamp(raw_reset_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')}")
+        else:
+            logging.info(f"MBTA - Rate Limit Resets at: {raw_reset_time}")
+    except Exception as e:
+        logging.error(f"Error processing rate limit headers: {type(e).__name__}: {e}")
 
 ##########################
 # STARTUP INSTRUCTIONS:
