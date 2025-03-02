@@ -16,7 +16,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       return {
         title: "You Can Never Leave",
         description: `As you try to excuse yourself, Green Tea's smile freezes. "No, dear ${name}. We're just getting started." The door mysteriously locks, and you realize you might be here for... quite some time. Green Tea will take very good care of you, whether you like it or not.`,
-        image: '/placeholder-green-tea-bad.png'
+        image: 'images/yandere.png'
       };
     }
     
@@ -24,7 +24,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       return {
         title: "Emotional Overflow",
         description: `Chrysanthemum Tea breaks down completely at the mention of their ex. Between sobs, they apologize profusely to you, ${name}, as the matchmaker gently escorts you from the room. Some wounds are still too fresh, even for a tea as sweet as Chrysanthemum.`,
-        image: '/placeholder-chrysanthemum-bad.png'
+        image: 'images/teaUnsure.png'
       };
     }
     
@@ -33,7 +33,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       return {
         title: "Not a Perfect Match",
         description: `${selectedTea.name} appreciates your interest, ${name}, but doesn't feel you've developed enough of a connection. Perhaps you should try a different tea variety.`,
-        image: '/placeholder-rejected.png'
+        image: 'images/teaReject.jpeg'
       };
     }
     
@@ -42,7 +42,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       return {
         title: "A Pleasant Acquaintance",
         description: `You and ${selectedTea.name} enjoy each other's company, ${name}, but perhaps aren't the perfect match. You'll certainly enjoy having this tea occasionally.`,
-        image: '/placeholder-friends.png'
+        image: 'images/teaFriend.png'
       };
     }
     
@@ -50,7 +50,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
     return {
       title: "A Perfect Brew!",
       description: `You and ${selectedTea.name} are a perfect match, ${name}! You'll be enjoying many wonderful cups together in a harmonious relationship.`,
-      image: '/placeholder-match.png'
+      image: 'images/teaMatched.jpeg'
     };
   };
   

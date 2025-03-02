@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import './App.css';
 import TeaSelect from './components/TeaSelect';
 import Dialogue from './components/Dialogue';
-import Choice from './components/Choice';
+import DialogueSystem from './components/DialogueSystem';
+import MatchmakerInterruption from './components/MatchmakerInterruption';
 import TeaRoom from './components/TeaRoom';
 import GameOver from './components/GameOver';
 import Locations from './components/Locations';
@@ -16,17 +17,17 @@ function App() {
       teaDatesCompleted: 0,
       selectedTeas: [], // Will hold the IDs of the selected teas
       currentTeaIndex: 0,
-      visitCounts: {} // Track how many times each tea has been visited
+      visitCounts: {}, // Track how many times each tea has been visited
+      visitedRooms: [], // Track which rooms have been visited already
+      maxDialogueChoices: 10 // Maximum dialogue choices per tea before matchmaker interrupts
     },
     teaRelationships: {}, // Stores favorability ratings for each tea
     currentTea: null,
     currentLocation: 'lobby', // Start in the lobby
     dialogueHistory: [],
-    hasMetMatchmaker: false,
-    gameTime: {
-      day: 1,
-      timeOfDay: 'evening' // Start in the evening
-    }
+    dialogueChoiceCount: 0, // Track how many dialogue choices made in current session
+    hasMetMatchmaker: false, 
+    matchmakerInterruption: false,// Flag for matchmaker interruption
   });
 
   // All available teas in the game based on your character profiles
@@ -34,11 +35,11 @@ function App() {
     { 
       id: 'black-tea', 
       name: 'Black Tea',
-      image: '/placeholder-black-tea.png', // Replace with actual image path
+      image: 'images/blackTea.jpeg', 
       teaRoom: 'black-room',
       type: 'Black Tea',
-      description: 'Chic, Mysterious',
-      introduction: "...", // *stares intensely without saying much*
+      description: 'The Chic & Mysterious One',
+      introduction: "... *stares intensely without saying much* ...", 
       personality: [
         "Likes cookies but refuses to admit they have a sweet tooth",
         "Doesn't really talk, but their stare is oddly intense",
@@ -50,10 +51,10 @@ function App() {
     { 
       id: 'green-tea', 
       name: 'Green Tea',
-      image: '/placeholder-green-tea.png', // Replace with actual image path
+      image: 'images/greenTea.jpeg', 
       teaRoom: 'green-room',
       type: 'Green Tea',
-      description: 'The Yandere "Mother"',
+      description: 'The Yande- Mother',
       introduction: "Oh, dear! It's so lovely to meet you. I've been waiting for someone like you to come along. Would you like some tea? I've already prepared it just how you like it.",
       personality: [
         "Calls you 'dear' in the most unsettlingly sweet tone",
@@ -66,7 +67,7 @@ function App() {
     { 
       id: 'matcha', 
       name: 'Matcha',
-      image: '/placeholder-matcha.png', // Replace with actual image path
+      image: 'images/matcha.jpeg', 
       teaRoom: 'matcha-room',
       type: 'Matcha',
       description: 'The Sleepy College Kid',
@@ -82,7 +83,7 @@ function App() {
     { 
       id: 'chrysanthemum', 
       name: 'Chrysanthemum Tea',
-      image: '/placeholder-chrysanthemum.png', // Replace with actual image path
+      image: 'images/chrys.jpeg', 
       teaRoom: 'chrysanthemum-room',
       type: 'Chrysanthemum Tea',
       description: 'The Emotional Softie',
@@ -98,7 +99,7 @@ function App() {
     { 
       id: 'rooibos', 
       name: 'Rooibos Tea',
-      image: '/placeholder-rooibos.png', // Replace with actual image path
+      image: 'images/rooibos.jpeg', 
       teaRoom: 'rooibos-room',
       type: 'Rooibos Tea',
       description: 'The Sporty & Healthy One',
@@ -160,7 +161,8 @@ function App() {
       player: {
         ...gameState.player,
         selectedTeas: selectedTeaIds,
-        visitCounts: initialVisitCounts
+        visitCounts: initialVisitCounts,
+        visitedRooms: [] // Initialize empty array for visited rooms
       },
       teaRelationships: initialRelationships,
       currentScreen: 'locations', // Go to locations screen for navigation
@@ -179,6 +181,17 @@ function App() {
   
   // Select a tea to interact with
   const selectTea = (tea) => {
+    // Record this room as visited
+    const teaRoomMap = {
+      'black-tea': 'black-room',
+      'green-tea': 'green-room',
+      'matcha': 'matcha-room',
+      'chrysanthemum': 'chrysanthemum-room',
+      'rooibos': 'rooibos-room'
+    };
+    
+    const roomToVisit = teaRoomMap[tea.id];
+    
     setGameState({
       ...gameState,
       currentTea: tea,
@@ -192,12 +205,29 @@ function App() {
     const updatedVisitCounts = { ...gameState.player.visitCounts };
     updatedVisitCounts[gameState.currentTea.id] = (updatedVisitCounts[gameState.currentTea.id] || 0) + 1;
     
+    // Record this room as visited
+    const teaRoomMap = {
+      'black-tea': 'black-room',
+      'green-tea': 'green-room',
+      'matcha': 'matcha-room',
+      'chrysanthemum': 'chrysanthemum-room',
+      'rooibos': 'rooibos-room'
+    };
+    const roomToVisit = teaRoomMap[gameState.currentTea.id];
+    const updatedVisitedRooms = [...gameState.player.visitedRooms];
+    
+    if (!updatedVisitedRooms.includes(roomToVisit)) {
+      updatedVisitedRooms.push(roomToVisit);
+    }
+    
     setGameState({
       ...gameState,
       dialogueHistory: [], // Reset dialogue for new tea interaction
+      dialogueChoiceCount: 0, // Reset choice counter for new tea interaction
       player: {
         ...gameState.player,
-        visitCounts: updatedVisitCounts
+        visitCounts: updatedVisitCounts,
+        visitedRooms: updatedVisitedRooms
       },
       currentScreen: 'dialogue'
     });
@@ -218,12 +248,16 @@ function App() {
       { character: gameState.currentTea.name, text: choice.response }
     ];
     
+    // Increment dialogue choice counter
+    const newDialogueChoiceCount = gameState.dialogueChoiceCount + 1;
+    
     // Check if this choice leads to an immediate ending
     if (choice.nextScreen === 'game-over') {
       setGameState({
         ...gameState,
         teaRelationships: updatedRelationships,
         dialogueHistory: updatedDialogueHistory,
+        dialogueChoiceCount: newDialogueChoiceCount,
         currentScreen: 'game-over',
         endingType: 'tea-selected', // Player chose this tea directly
         selectedTeaId: gameState.currentTea.id
@@ -231,11 +265,40 @@ function App() {
       return;
     }
     
-    // Update game state
+    // Check if player has reached maximum choices
+    // The matchmaker will interrupt if max dialogue choices reached
+    if (newDialogueChoiceCount >= gameState.player.maxDialogueChoices) {
+      // Add matchmaker interruption to dialogue history
+      const interruptedDialogueHistory = [
+        ...updatedDialogueHistory,
+        { 
+          character: "Tea Matchmaker", 
+          text: `*knocks on door* Excuse me, ${gameState.player.name}! I'm afraid your time with ${gameState.currentTea.name} is up. There are other teas waiting to meet you!` 
+        }
+      ];
+      
+      setGameState({
+        ...gameState,
+        teaRelationships: updatedRelationships,
+        dialogueHistory: interruptedDialogueHistory,
+        dialogueChoiceCount: newDialogueChoiceCount,
+        currentScreen: choice.nextScreen || 'dialogue',
+        matchmakerInterruption: true // Flag that matchmaker has interrupted
+      });
+      
+      // After a short delay, return to lobby
+      setTimeout(() => {
+        finishTeaDate();
+      }, 3000);
+      return;
+    }
+    
+    // Normal dialogue continuation
     setGameState({
       ...gameState,
       teaRelationships: updatedRelationships,
       dialogueHistory: updatedDialogueHistory,
+      dialogueChoiceCount: newDialogueChoiceCount,
       currentScreen: choice.nextScreen || 'dialogue'
     });
   };
@@ -245,15 +308,43 @@ function App() {
     // Update tea dates completed
     const updatedTeaDatesCompleted = gameState.player.teaDatesCompleted + 1;
     
-    setGameState({
-      ...gameState,
-      player: {
-        ...gameState.player,
-        teaDatesCompleted: updatedTeaDatesCompleted
-      },
-      currentScreen: 'locations',
-      currentLocation: 'lobby' // Return to lobby
+    // Check if all selected teas have been visited
+    const allRoomsVisited = gameState.player.selectedTeas.every(teaId => {
+      const teaRoomMap = {
+        'black-tea': 'black-room',
+        'green-tea': 'green-room',
+        'matcha': 'matcha-room',
+        'chrysanthemum': 'chrysanthemum-room',
+        'rooibos': 'rooibos-room'
+      };
+      const roomId = teaRoomMap[teaId];
+      return gameState.player.visitedRooms.includes(roomId);
     });
+    
+    // If all rooms visited, go to final selection
+    if (allRoomsVisited) {
+      setGameState({
+        ...gameState,
+        player: {
+          ...gameState.player,
+          teaDatesCompleted: updatedTeaDatesCompleted
+        },
+        currentScreen: 'final-selection',
+        matchmakerInterruption: false
+      });
+    } else {
+      // Otherwise, return to lobby
+      setGameState({
+        ...gameState,
+        player: {
+          ...gameState.player,
+          teaDatesCompleted: updatedTeaDatesCompleted
+        },
+        currentScreen: 'locations',
+        currentLocation: 'lobby',
+        matchmakerInterruption: false
+      });
+    }
   };
   
   // Go to final selection screen
@@ -299,40 +390,36 @@ function App() {
     if (locationId === 'lobby') return [];
     
     // If we're in a specific tea room, check if that tea is selected by the player
+    // AND if the room hasn't been visited yet
     const teaForLocation = Object.entries(teaLocationMap)
       .find(([teaId, roomId]) => roomId === locationId);
     
-    if (teaForLocation && gameState.player.selectedTeas.includes(teaForLocation[0])) {
+    if (teaForLocation && 
+        gameState.player.selectedTeas.includes(teaForLocation[0]) && 
+        !gameState.player.visitedRooms.includes(locationId)) {
       return [getTeaById(teaForLocation[0])];
     }
     
     return [];
   };
 
-  // Render the name input screen
+  // Name input state
+  const [nameInput, setNameInput] = useState('');
+  
+  // Render name input screen
   const renderNameInput = () => {
     return (
       <div className="name-input-screen">
-        <h1>Welcome to the Tea House</h1>
-        <p>Tell us your name, or we'll call you Pinecone Bob!</p>
+        <h2>What's your name?</h2>
         <input 
           type="text" 
-          placeholder="Enter your name" 
-          defaultValue=""
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              setPlayerName(e.target.value);
-            }
-          }}
+          placeholder="Enter your name"
+          value={nameInput}
+          onChange={(e) => setNameInput(e.target.value)}
         />
-        <div className="button-group">
-          <button onClick={() => setPlayerName(document.querySelector('input').value)}>
-            That's My Name
-          </button>
-          <button onClick={() => setPlayerName('Pinecone Bob')}>
-            I'll be Pinecone Bob
-          </button>
-        </div>
+        <button onClick={() => setPlayerName(nameInput)}>
+          Continue
+        </button>
       </div>
     );
   };
@@ -356,7 +443,7 @@ function App() {
         return (
           <div className="matchmaker-screen">
             <div className="matchmaker-portrait">
-              <img src="/placeholder-matchmaker.png" alt="Tea Matchmaker" />
+              <img src="images/matchMaker.jpeg" alt="Tea Matchmaker" />
             </div>
             <div className="dialogue-text">
               <p>Welcome to our Tea House, {gameState.player.name}! I'm the Tea Matchmaker, and I'll help you find your perfect tea match tonight.</p>
@@ -383,14 +470,13 @@ function App() {
               currentLocation={gameState.currentLocation}
               onLocationChange={changeLocation}
               onCharacterSelect={selectTea}
-              time={gameState.gameTime.timeOfDay}
-              day={gameState.gameTime.day}
               availableTeas={getAvailableTeasAtLocation(gameState.currentLocation)}
               selectedTeas={getSelectedTeas()}
+              visitedRooms={gameState.player.visitedRooms} // Pass visitedRooms
             />
             
             {/* Add a button to go to final selection */}
-            {gameState.currentLocation === 'lobby' && (
+            {gameState.currentLocation === 'lobby' && gameState.player.visitedRooms.length > 0 && (
               <div className="final-decision-button">
                 <button onClick={goToFinalSelection}>
                   Tell the Matchmaker Your Decision
@@ -421,16 +507,37 @@ function App() {
               relationship={gameState.teaRelationships[gameState.currentTea.id]}
               playerName={gameState.player.name}
             />
-            <Choice 
+            <DialogueSystem
               tea={gameState.currentTea}
               makeChoice={makeChoice}
               relationship={gameState.teaRelationships[gameState.currentTea.id]}
               teaDatesCompleted={gameState.player.teaDatesCompleted}
               playerName={gameState.player.name}
             />
-            <button onClick={finishTeaDate} className="end-dialogue">
-              Thank the Tea and Leave
-            </button>
+            
+            <div className="dialogue-controls">
+              <div className="choices-remaining">
+                <p>Time remaining: {gameState.player.maxDialogueChoices - gameState.dialogueChoiceCount} choices</p>
+                <div className="progress-bar">
+                  <div 
+                    className="progress" 
+                    style={{width: `${(gameState.dialogueChoiceCount / gameState.player.maxDialogueChoices) * 100}%`}}
+                  ></div>
+                </div>
+              </div>
+              <button onClick={finishTeaDate} className="end-dialogue">
+                Thank the Tea and Leave
+              </button>
+            </div>
+        
+            {/* Display matchmaker interruption if applicable */}
+            {gameState.matchmakerInterruption && (
+              <MatchmakerInterruption
+                playerName={gameState.player.name}
+                teaName={gameState.currentTea.name}
+                onComplete={finishTeaDate}
+              />
+            )}
           </div>
         );
       case 'final-selection':

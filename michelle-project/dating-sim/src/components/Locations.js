@@ -1,44 +1,44 @@
 import React from 'react';
 
 // This component handles tea room navigation and tea cup encounters
-const Locations = ({ currentLocation, onLocationChange, onCharacterSelect, availableTeas, selectedTeas }) => {
+const Locations = ({ currentLocation, onLocationChange, onCharacterSelect, availableTeas, selectedTeas, visitedRooms }) => {
   // Define all tea rooms in the game
   const locations = [
     {
       id: 'lobby',
       name: 'Tea House Lobby',
       description: 'The central area where you can plan which tea room to visit next. The Tea Matchmaker is available here if you wish to make your final selection.',
-      image: '/placeholder-lobby.png' // Replace with actual image path
+      image: 'images/lobby.jpeg' 
     },
     {
       id: 'black-room',
       name: 'Black Tea Room',
       description: 'An elegant room with dark wooden furniture and rich, earthy scents. The ambiance is sophisticated and mysterious.',
-      image: '/placeholder-black-room.png' // Replace with actual image path
+      image: 'images/blackTeaRoom.jpeg' 
     },
     {
       id: 'green-room',
       name: 'Green Tea Room',
       description: 'A cozy space that somehow feels both inviting and slightly suffocating. Family photos cover the walls, and a pot of tea is always steaming.',
-      image: '/placeholder-green-room.png' // Replace with actual image path
+      image: 'images/greenTeaRoom.jpeg' 
     },
     {
       id: 'matcha-room',
       name: 'Matcha Room',
       description: 'A chaotic dorm room with textbooks and papers scattered everywhere. Empty coffee cups sit on various surfaces, and a stack of oversized hoodies is piled on a chair.',
-      image: '/placeholder-matcha-room.png' // Replace with actual image path
+      image: 'images/matchaRoom.jpg' 
     },
     {
       id: 'chrysanthemum-room',
       name: 'Chrysanthemum Tea Room',
       description: 'A dreamy space filled with vases of fresh flowers and the soft scent of perfume. Fairy lights twinkle above, and romance novels fill the bookshelf.',
-      image: '/placeholder-chrysanthemum-room.png' // Replace with actual image path
+      image: 'images/chrysRoom.jpeg' 
     },
     {
       id: 'rooibos-room',
       name: 'Rooibos Tea Room',
       description: 'An energetic room decorated with baseball pennants and sports memorabilia. Exercise equipment occupies one corner, and a blender for protein shakes sits ready in another.',
-      image: '/placeholder-rooibos-room.png' // Replace with actual image path
+      image: 'images/rooibosRoom.jpg' 
     }
   ];
 
@@ -46,10 +46,13 @@ const Locations = ({ currentLocation, onLocationChange, onCharacterSelect, avail
   const location = locations.find(loc => loc.id === currentLocation) || locations[0];
   
   // Filter to show only rooms for selected teas plus the lobby
+  // AND exclude rooms that have already been visited
   const availableLocations = locations.filter(loc => {
+    // Lobby is always available
     if (loc.id === 'lobby') return true;
     
     // For tea rooms, check if the corresponding tea was selected
+    // AND if the room hasn't been visited yet
     const teaRoomMap = {
       'black-room': 'black-tea',
       'green-room': 'green-tea',
@@ -59,8 +62,16 @@ const Locations = ({ currentLocation, onLocationChange, onCharacterSelect, avail
     };
     
     const correspondingTeaId = teaRoomMap[loc.id];
-    return selectedTeas.some(tea => tea.id === correspondingTeaId);
+    
+    // Room is available if:
+    // 1. The tea is selected by the player
+    // 2. The room has not been visited yet
+    return selectedTeas.some(tea => tea.id === correspondingTeaId) && 
+           !visitedRooms.includes(loc.id);
   });
+
+  // Count how many rooms are left to visit
+  const roomsLeftToVisit = selectedTeas.length - visitedRooms.length;
 
   return (
     <div className="location-container">
@@ -70,6 +81,11 @@ const Locations = ({ currentLocation, onLocationChange, onCharacterSelect, avail
           <img src={location.image} alt={location.name} />
         </div>
         <p>{location.description}</p>
+        
+        {/* Display rooms left counter */}
+        <div className="rooms-counter">
+          <p>Teas left to meet: {roomsLeftToVisit} of {selectedTeas.length}</p>
+        </div>
       </div>
       
       <div className="location-navigation">
@@ -84,6 +100,25 @@ const Locations = ({ currentLocation, onLocationChange, onCharacterSelect, avail
                 className="location-button"
               >
                 {loc.name}
+              </button>
+            ))
+          }
+          
+          {/* Show visited room buttons but disabled */}
+          {locations
+            .filter(loc => 
+              loc.id !== 'lobby' && 
+              loc.id !== currentLocation && 
+              visitedRooms.includes(loc.id)
+            )
+            .map(loc => (
+              <button 
+                key={loc.id} 
+                disabled={true}
+                className="location-button visited"
+                title="You've already visited this room"
+              >
+                {loc.name} (Visited)
               </button>
             ))
           }
@@ -108,18 +143,25 @@ const Locations = ({ currentLocation, onLocationChange, onCharacterSelect, avail
         ) : (
           <p>
             {currentLocation === 'lobby' 
-              ? "The Tea Matchmaker waits patiently in the corner. Choose a tea room to visit, or tell the Matchmaker your decision." 
+              ? (roomsLeftToVisit > 0 
+                ? "The Tea Matchmaker waits patiently in the corner. Choose a tea room to visit, or tell the Matchmaker your decision."
+                : "The Tea Matchmaker approaches you. 'I see you've met all our teas! It's time to make your final selection.'")
               : "There are no tea cups waiting in this room right now. Perhaps try another room?"}
           </p>
         )}
       </div>
+      
+      {/* Auto-redirect if all rooms are visited */}
+      {roomsLeftToVisit === 0 && currentLocation === 'lobby' && (
+        <div className="matchmaker-prompt">
+          <p>The Tea Matchmaker smiles at you. "So, which tea was your cup of tea?"</p>
+          <button onClick={() => window.finalSelection()}>
+            Make Your Final Selection
+          </button>
+        </div>
+      )}
     </div>
   );
-};
-
-// Helper function to capitalize the first letter
-const capitalizeFirstLetter = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
 export default Locations;
