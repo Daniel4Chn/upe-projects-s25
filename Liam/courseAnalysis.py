@@ -1,5 +1,6 @@
 import sqlite3;
 from scrapenstore import my_classes;
+from HopcroftKarp import HopcroftKarp;
 
 courseDict = {}
 graph = {}
@@ -28,23 +29,29 @@ def fetchData():
     for row in data:
         courseDict[row[0]] = initCourse(row[1], row[2])
         for i, cat in enumerate(my_classes):
-            courseDict[row[0]][cat] = row[i + 3]
+            courseDict[row[0]][cat[1]] = row[i + 3]
 
 def createBipartiteGraph():
     # Loop through each course in the courseDict
     for course in courseDict:
         graph[course] = {}
         # Loop through each category in the course
-        for cat in my_classes:
+        for _, cat in my_classes:
             # If the course fulfills the category, add an edge of value 1 to the graph
             if courseDict[course][cat] == 1:
                 graph[course][cat] = 1
+    return graph
 
 def main():
     fetchData()
-    createBipartiteGraph()
-    for course in graph:
-        print(course, graph[course])
+    graph = createBipartiteGraph()
+    V = {}
+    for _, cat in my_classes:
+        V[cat] = 1
+    
+    matching = HopcroftKarp(graph, courseDict, V)
+    for course in matching:
+        print(course + ": " + matching[course])
 
 if __name__ == "__main__":
     main()
