@@ -35,6 +35,12 @@ h1 {
 	background-color: bisque !important;
 }
 
+@media (max-aspect-ratio: 9/16) {
+	#nearest-train-map {
+		height: 300px;
+	}
+}
+
 #cumulative-waittime-row {
 	font-size: 30px !important;
 	font-weight: bold;

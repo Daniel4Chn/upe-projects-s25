@@ -146,12 +146,11 @@ def get_nearest_station():
         logging.info(f"Retrieved nearest station - {nearest_station.getID()}: {nearest_station.getName()} at {min_distance} meters away")
 
         return jsonify({ "status": "success", "message": (min_distance, nearest_station.getName()) }), 200
-       
-   
+        
     except Exception as e:
 
         logging.error("Failed to retrieve nearest station")
-        abort(500, description="Failed to retrieve nearest station")
+        abort(500, description=f"Failed to retrieve nearest station: {e}")
 
 
 
