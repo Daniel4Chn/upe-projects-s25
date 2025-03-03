@@ -1,12 +1,15 @@
 "use strict"
 
-const minimumDistanceThreshold = 10; // meters (normal=10m)
-const waittimeThreshold = 300; // seconds (normal=300s/5min)
+const minimumDistanceThreshold = 300; // meters (normal=10m)
+const waittimeThreshold = 300; // seconds (normal=300s/5min), adjustable
 
-// Update train predictions for nearest station regardless of location
-// let isAtStation = false;
+let nearest_station;
+let timer;
+let current_waittime = 0 // seconds
+let cumulative_waittime = 0 // seconds
+let isAtStation = false;
 
-let nearest_station = undefined;
+
 
 // Handles API errors
 let handleError = (error) => {
@@ -65,19 +68,20 @@ function updateLocation(position) {
 				updateNextTrainPrediction("eastbound");
 				updateNextTrainPrediction("westbound");
 
-				/*
-					if(isAtStation) {
-						updateNextTrainPrediction("eastbound");
-						updateNextTrainPrediction("westbound");
-					}
-					
-					else {
-						document.getElementById("eastbound-train").innerText = "Proceed to the nearest station";
-						document.getElementById("eastbound-train-stops").innerText = "";
-						document.getElementById("westbound-train").innerText = "Proceed to the nearest station";
-						document.getElementById("westbound-train-stops").innerText = "";
-					}
-				*/
+				if(isAtStation) {
+					startTimer();
+					// updateNextTrainPrediction("eastbound");
+					// updateNextTrainPrediction("westbound");
+				}
+				
+				else {
+					stopTimer();
+					// document.getElementById("eastbound-train").innerText = "Proceed to the nearest station";
+					// document.getElementById("eastbound-train-stops").innerText = "";
+					// document.getElementById("westbound-train").innerText = "Proceed to the nearest station";
+					// document.getElementById("westbound-train-stops").innerText = "";
+				}
+
 			});
 		}
 		else {
@@ -114,12 +118,12 @@ async function updateNearestStation() {
 		nearest_station = data.message[1];
 		
 		if(data.message[0] <= minimumDistanceThreshold) {
-			// isAtStation = true;
+			isAtStation = true;
 			document.getElementById("station-header").innerText = "Current Station: ";
 			document.getElementById("station-status").innerText = data.message[1];
 		}
 		else {
-			// isAtStation = false;
+			isAtStation = false;
 			document.getElementById("station-header").innerText = `${data.message[1]}: `;
 			document.getElementById("station-status").innerText = `${Math.trunc(data.message[0])} meters away`;
 		}
@@ -199,6 +203,47 @@ function update_relevant_train_prediction(direction, data) {
 
 
 
+
+// Starts the current wait timer
+function startTimer() {
+	if(timer) {
+		clearInterval(timer);
+	}
+
+	timer = setInterval(() => {
+		current_waittime++;
+		updateCurrentWaitTimeDisplay();
+	}, 1000);
+}
+
+
+// Stops the current wait timer
+function stopTimer() {
+	if(timer) {
+		addTime();
+		clearInterval(timer);
+		timer = null;
+	}
+}
+
+// Updates current time elapsed on webpage
+function updateCurrentWaitTimeDisplay() {
+	document.getElementById("current-minutes").innerText = current_waittime / 60 < 10 ? '0' + Math.floor(current_waittime / 60) : Math.floor(current_waittime / 60);
+	document.getElementById("current-ten-seconds").innerText = (Math.floor(current_waittime / 10)) % 6;
+	document.getElementById("current-seconds").innerText = current_waittime % 10
+}
+
+
+// Adds the time to the cumulative time counter
+function addTime() {
+	cumulative_waittime += current_waittime - waittimeThreshold;
+	current_waittime = 0;
+}
+
+
+
+
+
 // Matches current waittime height to the left column elements
 function matchHeight() {
     // Get height of left column
@@ -216,8 +261,8 @@ window.addEventListener('resize', matchHeight);
 
 
 
-// Additionally updates location every 20 seconds - ensures at least constant updates
-// setInterval(trackLocation, 20000);
+// Alternative updates location every 5 seconds
+// setInterval(trackLocation, 5000);
 
 // Starts tracking as soon as page loads
 trackLocation();

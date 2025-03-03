@@ -28,7 +28,7 @@
     <!-- Cumulative Waittime -->
     <div class="row" id="cumulative-waittime-row">
         <div class="p-3 p-r-0 py-4 border bg-light">
-            <span class="custom-header">Time Wasted: </span>
+            <span class="custom-header">Total Time Wasted: </span>
             <span id="cumulative-waittime">00:00</span>
         </div>
     </div>
@@ -72,7 +72,9 @@
         <div class="col-sm-12 col-md-4 order-1 order-lg-2">
             <div class="border bg-light py-4 d-flex flex-column justify-content-center align-items-center" id="waittime-box">
                 <span class="custom-header">Current Waiting Time: </span>
-                <span id="current-waittime">00:00</span>
+                <span id="current-waittime">
+                    <span id="current-minutes">00</span>:<span id="current-ten-seconds">0</span><span id="current-seconds">0</span>
+                </span>
             </div>
         </div>
     </div>

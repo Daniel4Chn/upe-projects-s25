@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 import geopy.distance
 import requests
 import logging
-
 import os
 
 app = Flask(__name__)
@@ -120,9 +119,6 @@ def get_green_line_stops():
     
     except Exception as e:
         logging.error(f"An unknown error occurred: {type(e).__name__}: {e}")
-
-
-
 
 
 
