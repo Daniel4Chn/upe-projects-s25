@@ -253,13 +253,18 @@ function App() {
     
     // Check if this choice leads to an immediate ending
     if (choice.nextScreen === 'game-over') {
+      // Determine if this is a special bad ending based on the dialogue option
+      const isSpecialBadEnding = 
+        (gameState.currentTea.id === 'green-tea' && choice.text === "I should probably get going soon...") ||
+        (gameState.currentTea.id === 'chrysanthemum' && choice.text === "Tell me about your ex.");
+      
       setGameState({
         ...gameState,
         teaRelationships: updatedRelationships,
         dialogueHistory: updatedDialogueHistory,
         dialogueChoiceCount: newDialogueChoiceCount,
         currentScreen: 'game-over',
-        endingType: 'tea-selected', // Player chose this tea directly
+        endingType: isSpecialBadEnding ? 'special-bad-ending' : 'tea-selected', // Distinguish between endings
         selectedTeaId: gameState.currentTea.id
       });
       return;
@@ -476,13 +481,11 @@ function App() {
             />
             
             {/* Add a button to go to final selection */}
-            {gameState.currentLocation === 'lobby' && gameState.player.visitedRooms.length > 0 && (
-              <div className="final-decision-button">
-                <button onClick={goToFinalSelection}>
-                  Tell the Matchmaker Your Decision
-                </button>
-              </div>
-            )}
+            <div className="final-decision-button">
+              <button onClick={goToFinalSelection}>
+                Tell the Matchmaker Your Decision
+              </button>
+            </div>
           </div>
         );
       case 'tea-room':
@@ -544,19 +547,17 @@ function App() {
         return (
           <div className="final-selection-screen">
             <h2>Time to Choose Your Perfect Tea Match</h2>
-            <p>After meeting the teas, which one resonated with you the most?</p>
+            <p>The Tea Matchmaker smiles at you. "So, which tea was your cup of tea?"</p>
             <div className="tea-selection">
               {gameState.player.selectedTeas.map(teaId => {
                 const tea = getTeaById(teaId);
                 const relationship = gameState.teaRelationships[teaId];
-                const visits = gameState.player.visitCounts[teaId] || 0;
                 return (
                   <div key={teaId} className="tea-option">
                     <img src={tea.image} alt={tea.name} />
                     <h3>{tea.name}</h3>
                     <p>{tea.type}</p>
-                    <p>Compatibility: {relationship}%</p>
-                    <p>Visits: {visits}</p>
+                    <p>Compatibility: {Math.max(0, Math.min(100, Math.round(relationship * 2)))}%</p>
                     <button onClick={() => makeFinalSelection(teaId)}>
                       Choose {tea.name}
                     </button>
@@ -564,9 +565,6 @@ function App() {
                 );
               })}
             </div>
-            <button onClick={() => changeLocation('lobby')} className="return-button">
-              Not Ready Yet - Continue Visiting
-            </button>
           </div>
         );
       case 'game-over':

@@ -142,24 +142,20 @@ const Locations = ({ currentLocation, onLocationChange, onCharacterSelect, avail
           </div>
         ) : (
           <p>
-            {currentLocation === 'lobby' 
-              ? (roomsLeftToVisit > 0 
-                ? "The Tea Matchmaker waits patiently in the corner. Choose a tea room to visit, or tell the Matchmaker your decision."
-                : "The Tea Matchmaker approaches you. 'I see you've met all our teas! It's time to make your final selection.'")
-              : "There are no tea cups waiting in this room right now. Perhaps try another room?"}
+            {currentLocation === 'lobby' ? (
+              roomsLeftToVisit === 1 ? (
+                "The Tea Matchmaker smiles and reminds you, 'This will be the last room, hope it's your cup of tea!'"
+              ) : roomsLeftToVisit === 2 ? (
+                "The Tea Matchmaker looks at you and nods knowingly before going back to attend to others."
+              ) : (
+                "The Tea Matchmaker waits patiently in the corner. Choose a tea room to visit, or tell the Matchmaker your decision."
+              )
+            ) : (
+              "There are no tea cups waiting in this room right now. Perhaps try another room?"
+            )}
           </p>
         )}
       </div>
-      
-      {/* Auto-redirect if all rooms are visited */}
-      {roomsLeftToVisit === 0 && currentLocation === 'lobby' && (
-        <div className="matchmaker-prompt">
-          <p>The Tea Matchmaker smiles at you. "So, which tea was your cup of tea?"</p>
-          <button onClick={() => window.finalSelection()}>
-            Make Your Final Selection
-          </button>
-        </div>
-      )}
     </div>
   );
 };

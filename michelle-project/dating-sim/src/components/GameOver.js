@@ -4,7 +4,7 @@ import React from 'react';
 const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }) => {
   // Get the selected tea object
   const selectedTea = teas.find(tea => tea.id === selectedTeaId);
-  const relationshipValue = relationships[selectedTeaId] || 0;
+  const relationship = relationships[selectedTeaId] || 0;
   
   // Default to "Pinecone Bob" if no player name is provided
   const name = playerName || "Pinecone Bob";
@@ -12,7 +12,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
   // Determine the ending based on relationship value and ending type
   const getEnding = () => {
     // Check for special bad endings first - these override everything else
-    if (selectedTea.id === 'green-tea' && endingType === 'game-over') {
+    if (selectedTea.id === 'green-tea' && endingType === 'special-bad-ending') {
       return {
         title: "You Can Never Leave",
         description: `As you try to excuse yourself, Green Tea's smile freezes. "No, dear ${name}. We're just getting started." The door mysteriously locks, and you realize you might be here for... quite some time. Green Tea will take very good care of you, whether you like it or not.`,
@@ -20,7 +20,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       };
     }
     
-    if (selectedTea.id === 'chrysanthemum' && endingType === 'game-over') {
+    if (selectedTea.id === 'chrysanthemum' && endingType === 'special-bad-ending') {
       return {
         title: "Emotional Overflow",
         description: `Chrysanthemum Tea breaks down completely at the mention of their ex. Between sobs, they apologize profusely to you, ${name}, as the matchmaker gently escorts you from the room. Some wounds are still too fresh, even for a tea as sweet as Chrysanthemum.`,
@@ -29,7 +29,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
     }
     
     // Standard endings based on relationship value with adjusted thresholds
-    if (relationshipValue < 20) {
+    if (relationship < 20) {
       return {
         title: "Not a Perfect Match",
         description: `${selectedTea.name} appreciates your interest, ${name}, but doesn't feel you've developed enough of a connection. Perhaps you should try a different tea variety.`,
@@ -38,7 +38,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
     }
     
     // If relationship is medium, it's a friendship ending
-    if (relationshipValue < 35) {
+    if (relationship < 35) {
       return {
         title: "A Pleasant Acquaintance",
         description: `You and ${selectedTea.name} enjoy each other's company, ${name}, but perhaps aren't the perfect match. You'll certainly enjoy having this tea occasionally.`,
@@ -55,9 +55,9 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
   };
   
   // Get tea-specific ending details
-  const getTeaSpecificEnding = (teaId, relationshipValue, playerName) => {
+  const getTeaSpecificEnding = (teaId, relationship, playerName) => {
     // Don't show specific details for bad endings or for low relationship values
-    if (endingType === 'game-over' || relationshipValue < 35) return ""; 
+    if (endingType === 'game-over' || relationship < 35) return ""; 
     
     switch(teaId) {
       case 'black-tea':
@@ -76,7 +76,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
   };
   
   const ending = getEnding();
-  const teaSpecificDetails = getTeaSpecificEnding(selectedTeaId, relationshipValue, name);
+  const teaSpecificDetails = getTeaSpecificEnding(selectedTeaId, relationship, name);
 
   return (
     <div className="game-over-container">
@@ -103,13 +103,13 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
           <img src={selectedTea.image} alt={selectedTea.name} />
           <h4>{selectedTea.name}</h4>
           <p>{selectedTea.type}</p>
-          <p>Compatibility: {relationshipValue}%</p>
+          <p>Compatibility: {Math.max(0, Math.min(100, Math.round(relationship * 2)))}%</p>
         </div>
       </div>
       
       <div className="matchmaker-comment">
         <p>
-          {relationshipValue >= 35 ? 
+          {relationship >= 35 ? 
             `The Tea Matchmaker smiles warmly at ${name}, pleased to have helped you find your perfect tea match.` :
             `The Tea Matchmaker nods thoughtfully. "Perhaps we should try again another evening to find your perfect tea match, ${name}."`}
         </p>
