@@ -1,6 +1,6 @@
 import sqlite3;
 from scrapenstore import my_classes;
-from HopcroftKarp import HopcroftKarp;
+from linearSolver import minvertices;
 
 courseDict = {}
 graph = {}
@@ -49,9 +49,18 @@ def main():
     for _, cat in my_classes:
         V[cat] = 1
     
-    matching = HopcroftKarp(graph, courseDict, V)
-    for course in matching:
-        print(course + ": " + matching[course])
+    choices = minvertices(graph, courseDict, V)
+
+    i = 1
+    for vertex in choices:
+        if vertex in courseDict:
+            mystr = str(i) + ") " + vertex + ": "
+            for cat in courseDict[vertex]:
+                if courseDict[vertex][cat] == 1:
+                    mystr += cat + ", "
+            print(mystr)
+        i += 1
+
 
 if __name__ == "__main__":
     main()
