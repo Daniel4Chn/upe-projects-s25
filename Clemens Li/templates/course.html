@@ -6,14 +6,11 @@
 </head>
 <body>
     <h1>{{ course_name }}</h1>
-    <div class="assignment-grid">
-        {% for assignment in assignments %}
-        <div class="assignment-box">
-            <h2>{{ assignment.name }}</h2>
-            <p>Due: {{ assignment.due_date }}</p>
-            <p>Score: {{ assignment.score if assignment.score else 'Not graded' }}</p>
-        </div>
-        {% endfor %}
+    <div class="assignment-box">
+        <p> {{ course_stats[1] }}
+        <!-- {% for assignment in course_assignments %}
+            <p> {{ assignment }} </p>
+        {% endfor %} -->
     </div>
 </body>
 </html>
