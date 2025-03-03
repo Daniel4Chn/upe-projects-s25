@@ -187,8 +187,6 @@ def get_next_train():
                 vehicle_id = prediction['relationships']['vehicle']['data']['id']
                 train_station = get_station_from_train(vehicle_id)
 
-                print(f"direction: {data.get('direction')} - {train_station}")
-
                 if train_station:
                     stops = get_stops_between_stations(train_station, nearest_station_id)
                     return jsonify({ "status": "success", "message": stops }), 200
@@ -222,7 +220,7 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-
+### Helper methods below ###
 
 # Calculates the distance between the current coordinates and a station's coordinates.
 # Returns the distance in meters
@@ -376,6 +374,7 @@ def log_rate_limits_mbta():
             logging.info(f"MBTA - Rate Limit Resets at: {datetime.fromtimestamp(raw_reset_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')}")
         else:
             logging.info(f"MBTA - Rate Limit Resets at: {raw_reset_time}")
+
     except Exception as e:
         logging.error(f"Error processing rate limit headers: {type(e).__name__}: {e}")
 

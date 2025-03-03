@@ -1,11 +1,46 @@
 "use strict"
 
 const minimumDistanceThreshold = 10; // meters (normal=10m)
-let isAtStation = false;
+const waittimeThreshold = 300; // seconds (normal=300s/5min)
+
+// Update train predictions for nearest station regardless of location
+// let isAtStation = false;
+
 let nearest_station = undefined;
 
 // Handles API errors
-let handleError = (error) => console.error("Error getting location:", error);
+let handleError = (error) => {
+    // Check specifically for timeout errors (error.code === 3)
+    if (error.code === 3) {
+        // Code to execute when geolocation times out
+        console.error("Geolocation timed out!");
+        
+        // Update UI to notify user
+        document.getElementById("station-header").innerText = "Location Service: ";
+        document.getElementById("station-status").innerText = "Timed out. Retrying...";
+        
+        // Retries after a delay
+        setTimeout(() => {
+            console.log("Retrying geolocation after timeout...");
+            trackLocation();
+        }, 3000); // Wait 3 seconds before retrying
+    } 
+    // Handle other geolocation errors
+    else if (error.code === 1) {
+        // Permission denied
+        document.getElementById("station-header").innerText = "Location Access: ";
+        document.getElementById("station-status").innerText = "Permission denied";
+    } 
+    else if (error.code === 2) {
+        // Position unavailable
+        document.getElementById("station-header").innerText = "Location Service: ";
+        document.getElementById("station-status").innerText = "Currently unavailable";
+    }
+    else {
+        // Generic error handling
+        console.error("Error getting location:", error);
+    }
+};
 
 
 // Run on successful callback: Sends location to backend
@@ -27,17 +62,22 @@ function updateLocation(position) {
 			updateNearestStation()
 			.then(() => {
 
-				if(isAtStation) {
-					updateNextTrainPrediction("eastbound");
-					updateNextTrainPrediction("westbound");
-				}
-				
-				else {
-					document.getElementById("eastbound-train").innerText = "Proceed to the nearest station";
-					document.getElementById("eastbound-train-stops").innerText = "";
-					document.getElementById("westbound-train").innerText = "Proceed to the nearest station";
-					document.getElementById("westbound-train-stops").innerText = "";
-				}
+				updateNextTrainPrediction("eastbound");
+				updateNextTrainPrediction("westbound");
+
+				/*
+					if(isAtStation) {
+						updateNextTrainPrediction("eastbound");
+						updateNextTrainPrediction("westbound");
+					}
+					
+					else {
+						document.getElementById("eastbound-train").innerText = "Proceed to the nearest station";
+						document.getElementById("eastbound-train-stops").innerText = "";
+						document.getElementById("westbound-train").innerText = "Proceed to the nearest station";
+						document.getElementById("westbound-train-stops").innerText = "";
+					}
+				*/
 			});
 		}
 		else {
@@ -74,12 +114,12 @@ async function updateNearestStation() {
 		nearest_station = data.message[1];
 		
 		if(data.message[0] <= minimumDistanceThreshold) {
-			isAtStation = true;
+			// isAtStation = true;
 			document.getElementById("station-header").innerText = "Current Station: ";
 			document.getElementById("station-status").innerText = data.message[1];
 		}
 		else {
-			isAtStation = false;
+			// isAtStation = false;
 			document.getElementById("station-header").innerText = `${data.message[1]}: `;
 			document.getElementById("station-status").innerText = `${Math.trunc(data.message[0])} meters away`;
 		}
@@ -124,13 +164,13 @@ function update_relevant_train_prediction(direction, data) {
 			document.getElementById("eastbound-train-stops").innerText = nearest_station + "...";
 		}
 		else {
-			document.getElementById("eastbound-train").innerText = "Next train in ";
+			document.getElementById("eastbound-train").innerText = "";
 
 			if(data.message === 1) {
-				document.getElementById("eastbound-train-stops").innerText = data.message + " stop";
+				document.getElementById("eastbound-train-stops").innerText = data.message + " stop away";
 			}
 			else {
-				document.getElementById("eastbound-train-stops").innerText = data.message + " stops";
+				document.getElementById("eastbound-train-stops").innerText = data.message + " stops away";
 			}
 		}
 	}
@@ -141,13 +181,13 @@ function update_relevant_train_prediction(direction, data) {
 			document.getElementById("westbound-train-stops").innerText = nearest_station + "...";
 		}
 		else {
-			document.getElementById("westbound-train").innerText = "Next train in ";
+			document.getElementById("westbound-train").innerText = "";
 
 			if(data.message === 1) {
-				document.getElementById("westbound-train-stops").innerText = data.message + " stop";
+				document.getElementById("westbound-train-stops").innerText = data.message + " stop away";
 			}
 			else {
-				document.getElementById("westbound-train-stops").innerText = data.message + " stops";
+				document.getElementById("westbound-train-stops").innerText = data.message + " stops away";
 			}
 		}
 	}
@@ -158,8 +198,26 @@ function update_relevant_train_prediction(direction, data) {
 }
 
 
-// Additionally updates location every 10 seconds - ensures at least constant updates
-setInterval(trackLocation, 10000);
+
+// Matches current waittime height to the left column elements
+function matchHeight() {
+    // Get height of left column
+    const leftColumn = document.querySelector('.col-md-8');
+    const waitTimeBox = document.querySelector('#waittime-box');
+    
+    if (leftColumn && waitTimeBox && window.innerWidth >= 768) {
+        waitTimeBox.style.height = leftColumn.offsetHeight - 0.01 + 'px'; // Reduce slight 0.01 height offset (was annoying to look at)
+    }
+}
+
+// Call on page load and window resize
+window.addEventListener('load', matchHeight);
+window.addEventListener('resize', matchHeight);
+
+
+
+// Additionally updates location every 20 seconds - ensures at least constant updates
+// setInterval(trackLocation, 20000);
 
 // Starts tracking as soon as page loads
 trackLocation();
