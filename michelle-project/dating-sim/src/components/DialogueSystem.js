@@ -42,7 +42,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'black-tea',
       text: "Would you like a cookie?",
       response: "No. I don't like... *eyes the cookie* ...sweet things. *continues staring at the cookie*",
-      effects: { relationship: 7 },
+      effects: { relationship: 6 },
       depthRequired: 1
     },
     {
@@ -76,7 +76,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'black-tea',
       text: "Do you drink black tea?",
       response: "You... *stares intently* sorry I'm not into that kind of stuff.",
-      effects: { relationship: -2 },
+      effects: { relationship: -3 },
       depthRequired: 2
     },
     
@@ -94,7 +94,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'black-tea',
       text: "Do you have any pets?",
       response: "A black cat. Midnight. She judges me less than most people.",
-      effects: { relationship: 5 },
+      effects: { relationship: 3 },
       depthRequired: 3
     },
     {
@@ -102,7 +102,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'black-tea',
       text: "What kind of music do you listen to?",
       response: "Gothic symphonic metal. Classical. Anything with depth and darkness.",
-      effects: { relationship: 5 },
+      effects: { relationship: 3 },
       depthRequired: 3
     },
     
@@ -130,7 +130,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'black-tea',
       text: "I think I'm starting to understand you better.",
       response: `*reaches out and briefly touches ${playerName}'s hand* Few try. Fewer succeed.`,
-      effects: { relationship: 5 },
+      effects: { relationship: 4 },
       depthRequired: 5
     },
     {
@@ -148,7 +148,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "What a lovely teacup you have!",
       response: `Oh thank you, dear ${playerName}! It belonged to my grandmother. I have her entire collection of 47 teacups at home!`,
-      effects: { relationship: 2 },
+      effects: { relationship: 6 },
       depthRequired: 1
     },
     {
@@ -156,7 +156,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "This is delicious tea. What kind is it?",
       response: `Oh, dear ${playerName}, I'm so glad you like it! It's just a special blend I make every morning. *doesn't acknowledge it's green tea*`,
-      effects: { relationship: 2 },
+      effects: { relationship: 5 },
       depthRequired: 1
     },
     {
@@ -164,7 +164,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "Lovely weather today, isn't it?",
       response: `Yes, perfect for a walk in the park! Which reminds me, I noticed you like taking walks on Tuesday afternoons, ${playerName}. How delightful!`,
-      effects: { relationship: 1 },
+      effects: { relationship: 5 },
       depthRequired: 1
     },
     {
@@ -172,7 +172,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "I should probably get going soon...",
       response: `No, ${playerName}.`,
-      effects: { relationship: -5 },
+      effects: { relationship: 100000000 },
       depthRequired: 1,
       nextScreen: 'game-over' // Special bad ending for Green Tea
     },
@@ -183,7 +183,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "Do you have any hobbies?",
       response: `I love taking care of others, dear ${playerName}! Speaking of which, I noticed you were out late last night. Everything okay?`,
-      effects: { relationship: 3 },
+      effects: { relationship: 5 },
       depthRequired: 2
     },
     {
@@ -191,7 +191,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "Do you live nearby?",
       response: `Oh yes! Just three blocks from your apartment, actually. What a coincidence!`,
-      effects: { relationship: 2 },
+      effects: { relationship: 7 },
       depthRequired: 2
     },
     {
@@ -199,7 +199,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "Have you been to that new restaurant downtown?",
       response: `Not yet, but I know you went there last Friday with your friends! Did you enjoy the pasta? You had the linguini, correct?`,
-      effects: { relationship: 2 },
+      effects: { relationship: 5 },
       depthRequired: 2
     },
     
@@ -209,7 +209,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "You seem to remember a lot about me...",
       response: `Of course I do, dear ${playerName}! I pay attention to the people I care about. I have a whole journal dedicated to our interactions!`,
-      effects: { relationship: 4 },
+      effects: { relationship: 5 },
       depthRequired: 3
     },
     {
@@ -217,7 +217,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "What do you like to do for fun?",
       response: `Oh, I enjoy cooking, baking, knitting... I made you a sweater! *pulls out a sweater with ${playerName}'s face knitted on it* Surprise!`,
-      effects: { relationship: 5 },
+      effects: { relationship: 6 },
       depthRequired: 3
     },
     {
@@ -225,7 +225,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "Have you always been this attentive to details?",
       response: `Only with special people, ${playerName}. I have albums of photos of all my past relationships. Would you like to see?`,
-      effects: { relationship: 3 },
+      effects: { relationship: 4 },
       depthRequired: 3
     },
     
@@ -235,7 +235,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "You remember everything I say, don't you?",
       response: `Of course, dear ${playerName}! Like how you mentioned your favorite color was blue on Tuesday at 3:42 PM, and how you prefer your sandwiches with the crusts cut off, and how you sleep with your window open exactly 3 inches...`,
-      effects: { relationship: 5 },
+      effects: { relationship: 6 },
       depthRequired: 4
     },
     {
@@ -243,7 +243,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "What are you looking for in a relationship?",
       response: `Someone who'll never leave my side, ${playerName}! Ever! Someone I can take care of forever and ever and ever...`,
-      effects: { relationship: 6 },
+      effects: { relationship: 7 },
       depthRequired: 4
     },
     
@@ -253,7 +253,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "I've never met anyone quite like you before.",
       response: `And you never will again, ${playerName}! We're perfect together. I've already planned our next 50 dates!`,
-      effects: { relationship: 7 },
+      effects: { relationship: 8 },
       depthRequired: 5
     },
     {
@@ -261,7 +261,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'green-tea',
       text: "You're my cup of tea, I think.",
       response: `Oh, dear ${playerName}! *claps hands excitedly* I knew we were meant to be together! I'll take such good care of you, forever and ever!`,
-      effects: { relationship: 8 },
+      effects: { relationship: 9 },
       depthRequired: 5
     },
     
@@ -271,7 +271,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'matcha',
       text: "Hi there! I'm glad to meet you.",
       response: "*looks up bleary-eyed* Hey... *checks phone* Sorry, what was your name again?",
-      effects: { relationship: 1 },
+      effects: { relationship: 3 },
       depthRequired: 1
     },
     {
@@ -279,7 +279,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'matcha',
       text: "What's your major in college?",
       response: "*yawns* Biochem... I think. Maybe it was Biophysics? *checks phone* Sorry, what was the question?",
-      effects: { relationship: 3 },
+      effects: { relationship: 4 },
       depthRequired: 1
     },
     {
@@ -295,7 +295,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'matcha',
       text: "Nice hoodie. Where'd you get it?",
       response: `Thanks! I have like twenty of these. They're basically my uniform. This one's from... *falls asleep for 3 seconds* ...sorry, ${playerName}, what were we talking about?`,
-      effects: { relationship: 3 },
+      effects: { relationship: 6 },
       depthRequired: 1
     },
     
@@ -321,7 +321,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'matcha',
       text: "Do you have any hobbies outside of studying?",
       response: "Hobbies? *laughs nervously* Sleep is my hobby now. If I ever get any.",
-      effects: { relationship: 3 },
+      effects: { relationship: 6 },
       depthRequired: 2
     },
     
@@ -331,7 +331,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'matcha',
       text: "You know you're a cup of tea, right?",
       response: `I'm a what now? *looks confused at ${playerName}* Is that like, some kind of new slang? I'm not up on the latest lingo, too busy with exams...`,
-      effects: { relationship: 5 },
+      effects: { relationship: 3 },
       depthRequired: 3
     },
     {
@@ -339,7 +339,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'matcha',
       text: "What do you want to do after college?",
       response: "Sleep for about three years straight. *laughs* Then maybe grad school? My parents expect it. *sighs*",
-      effects: { relationship: 4 },
+      effects: { relationship: 6 },
       depthRequired: 3
     },
     {
@@ -469,7 +469,7 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
       teaId: 'chrysanthemum',
       text: "Tell me about your ex.",
       response: "*eyes immediately well up with tears* I... I... *starts sobbing uncontrollably*",
-      effects: { relationship: -10 },
+      effects: { relationship: -100 },
       depthRequired: 3,
       nextScreen: 'game-over' // Special bad ending for Chrysanthemum
     },
@@ -648,8 +648,8 @@ const DialogueSystem = ({ tea, makeChoice, relationship, teaDatesCompleted, play
   
   // Update available choices when relationship changes significantly
   useEffect(() => {
-    // Every 10 points of relationship, increase conversation depth
-    const newDepth = Math.floor(relationship / 5) + 1;
+    // Adjust depth thresholds - each ~7 points increases depth
+    const newDepth = Math.min(5, Math.floor(relationship / 7) + 1);
     if (newDepth > conversationDepth) {
       setConversationDepth(newDepth);
       

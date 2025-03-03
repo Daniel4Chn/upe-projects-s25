@@ -5,7 +5,7 @@ const MatchmakerInterruption = ({ playerName, teaName, onComplete }) => {
     // Auto-advance after a delay
     const timer = setTimeout(() => {
       if (onComplete) onComplete();
-    }, 4000); // 4-second delay before auto-advancing
+    }, 6000); // 6-second delay before auto-advancing
     
     return () => clearTimeout(timer);
   }, [onComplete]);
@@ -14,7 +14,7 @@ const MatchmakerInterruption = ({ playerName, teaName, onComplete }) => {
     <div className="matchmaker-interruption-overlay">
       <div className="matchmaker-popup">
         <div className="matchmaker-portrait">
-          <img src="/placeholder-matchmaker.png" alt="Tea Matchmaker" />
+          <img src="images/matchMaker.jpeg" alt="Tea Matchmaker" />
         </div>
         <div className="matchmaker-message">
           <h3>Time's Up!</h3>

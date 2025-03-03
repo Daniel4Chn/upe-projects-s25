@@ -11,8 +11,8 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
   
   // Determine the ending based on relationship value and ending type
   const getEnding = () => {
-    // Check for special bad endings first
-    if (endingType === 'game-over' && selectedTea.id === 'green-tea' && relationshipValue < 30) {
+    // Check for special bad endings first - these override everything else
+    if (selectedTea.id === 'green-tea' && endingType === 'game-over') {
       return {
         title: "You Can Never Leave",
         description: `As you try to excuse yourself, Green Tea's smile freezes. "No, dear ${name}. We're just getting started." The door mysteriously locks, and you realize you might be here for... quite some time. Green Tea will take very good care of you, whether you like it or not.`,
@@ -20,7 +20,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       };
     }
     
-    if (endingType === 'game-over' && selectedTea.id === 'chrysanthemum' && relationshipValue < 30) {
+    if (selectedTea.id === 'chrysanthemum' && endingType === 'game-over') {
       return {
         title: "Emotional Overflow",
         description: `Chrysanthemum Tea breaks down completely at the mention of their ex. Between sobs, they apologize profusely to you, ${name}, as the matchmaker gently escorts you from the room. Some wounds are still too fresh, even for a tea as sweet as Chrysanthemum.`,
@@ -28,8 +28,8 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       };
     }
     
-    // Standard endings based on relationship value
-    if (relationshipValue < 30) {
+    // Standard endings based on relationship value with adjusted thresholds
+    if (relationshipValue < 20) {
       return {
         title: "Not a Perfect Match",
         description: `${selectedTea.name} appreciates your interest, ${name}, but doesn't feel you've developed enough of a connection. Perhaps you should try a different tea variety.`,
@@ -38,7 +38,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
     }
     
     // If relationship is medium, it's a friendship ending
-    if (relationshipValue < 60) {
+    if (relationshipValue < 35) {
       return {
         title: "A Pleasant Acquaintance",
         description: `You and ${selectedTea.name} enjoy each other's company, ${name}, but perhaps aren't the perfect match. You'll certainly enjoy having this tea occasionally.`,
@@ -56,7 +56,8 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
   
   // Get tea-specific ending details
   const getTeaSpecificEnding = (teaId, relationshipValue, playerName) => {
-    if (relationshipValue < 60) return ""; // Only show specific details for good endings
+    // Don't show specific details for bad endings or for low relationship values
+    if (endingType === 'game-over' || relationshipValue < 35) return ""; 
     
     switch(teaId) {
       case 'black-tea':
@@ -108,7 +109,7 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       
       <div className="matchmaker-comment">
         <p>
-          {relationshipValue >= 60 ? 
+          {relationshipValue >= 35 ? 
             `The Tea Matchmaker smiles warmly at ${name}, pleased to have helped you find your perfect tea match.` :
             `The Tea Matchmaker nods thoughtfully. "Perhaps we should try again another evening to find your perfect tea match, ${name}."`}
         </p>
