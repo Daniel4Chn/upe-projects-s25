@@ -2,6 +2,7 @@
 
 const minimumDistanceThreshold = 300; // meters (normal=10m)
 const waittimeThreshold = 300; // seconds (normal=300s/5min), adjustable
+const timeout = 1000; // milliseconds (normal=1000ms)
 
 let nearest_station;
 let timer;
@@ -69,7 +70,11 @@ function updateLocation(position) {
 				updateNextTrainPrediction("westbound");
 
 				if(isAtStation) {
-					startTimer();
+
+					if(!timer) {
+						startTimer();
+					}
+					
 					// updateNextTrainPrediction("eastbound");
 					// updateNextTrainPrediction("westbound");
 				}
@@ -100,7 +105,7 @@ function trackLocation() {
 		// navigator.geolocation.getCurrentPosition(updateLocation, handleError, {
 			enableHighAccuracy: true, // Precise location data
 			maximumAge: 10000, // 10 seconds cached location
-			timeout: 5000 // 5 seconds to retrieve before timeout
+			timeout: timeout
 		})
 	}
 	else {
@@ -164,7 +169,7 @@ function updateNextTrainPrediction(direction) {
 function update_relevant_train_prediction(direction, data) {
 	if(direction === "eastbound") {
 		if(data.message === 0) {
-			document.getElementById("eastbound-train").innerText = "Train is approaching ";
+			document.getElementById("eastbound-train").innerText = "Approaching ";
 			document.getElementById("eastbound-train-stops").innerText = nearest_station + "...";
 		}
 		else {
@@ -181,7 +186,7 @@ function update_relevant_train_prediction(direction, data) {
 
 	else if(direction === "westbound") {
 		if(data.message === 0) {
-			document.getElementById("westbound-train").innerText = "Train is approaching ";
+			document.getElementById("westbound-train").innerText = "Approaching ";
 			document.getElementById("westbound-train-stops").innerText = nearest_station + "...";
 		}
 		else {
@@ -210,8 +215,10 @@ function startTimer() {
 		clearInterval(timer);
 	}
 
+	let timerStartTimestamp = Date.now() - (current_waittime * 1000);
+
 	timer = setInterval(() => {
-		current_waittime++;
+		current_waittime = Math.floor((Date.now() - timerStartTimestamp) / 1000);
 		updateCurrentWaitTimeDisplay();
 	}, 1000);
 }
