@@ -35,10 +35,8 @@ body {
 }
 
 h1 {
-  font-family: DM;
   font-size: 50px;
   white-space: nowrap;
-  text-align: center;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -53,13 +51,6 @@ h2, h3, h4, h5, h6 {
 
 p {
   margin-bottom: 10px;
-}
-
-/* ========== Layout ========== */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px;
 }
 
 /* ========== Login Components ========== */
@@ -85,7 +76,6 @@ p {
 label {
   display: block;
   margin-bottom: 0;
-  font-family: DM, sans-serif;
   color: var(--text);
 }
 
@@ -101,12 +91,13 @@ input[type=text] {
   border: none;
   border-bottom: 3px solid var(--fade);
   outline: none;
-  transition: border-bottom 0.6s ease;
+  transition: border-bottom 0.2s ease;
 }
 
 input[type=password]:focus, 
 input[type=text]:focus {
   border-bottom: 2px solid var(--text);
+  transition: border-bottom 0.6s ease;
 }
 
 #login_button {
@@ -116,14 +107,12 @@ input[type=text]:focus {
   margin-top: 15px;
   padding: 10px 20px;
   width: 70%;
-  min-width: unset;
   background: var(--text);
   color: var(--background);
   text-decoration: none;
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  outline: #E9EDC9;
   transition: 0.6s ease;
 }
 
@@ -188,13 +177,4 @@ input[type=text]:focus {
   .row {
       flex-direction: column;
   }
-}
-
-/* ========== Footer ========== */
-.footer {
-  margin-top: 20px;
-  text-align: center;
-  padding: 10px;
-  background: #222;
-  color: white;
 }
