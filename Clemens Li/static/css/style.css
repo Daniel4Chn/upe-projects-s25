@@ -1,87 +1,196 @@
 /* ========== CSS Reset ========== */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  html {
-    font-size: 16px;
-    scroll-behavior: smooth;
-  }
-  
-  /* Custom Font */
-    @font-face { font-family: kanit-semibold; 
-    src: url('./Kanit/Kanit-SemiBold.ttf'); } 
-    h2{
-            font-family: kanit-semibold;
-    }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  body {
-    font-family: kanit-semibold, sans-serif;
-    background-color: #f9f9f9;
-    color: #258ea6;
-    line-height: 1.6;
-    padding: 20px;
-    text-align: center;
-  }
+/* ========== Variables & Base Styles ========== */
+:root {
+  --background: #1F2B33;
+  --text: #EEECE8;
+  --pop: #ABDAE1;
+  --fade: #8A8B93;
+  --contrast: #AE9998;
+}
 
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-  }
-  
-  /* ========== Typography ========== */
-  h1, h2, h3, h4, h5, h6 {
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
-  
-  p {
-    margin-bottom: 10px;
-  }
-  
-  /* ========== Buttons ========== */
-  #login_button {
-    font-family: kanit-semibold;
-    display: inline-block;
-    padding: 10px 20px;
-    background: #e2b1b1;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: 0.3s;
-  }
-  
-  #login_button:hover {
-    background: #E2C2FF;
-  }
-  
-  /* ========== Grid System ========== */
+html {
+  font-size: 20px;
+  scroll-behavior: smooth;
+}
+
+/* ========== Typography ========== */
+@font-face { 
+  font-family: DM; 
+  src: url("./DM_Serif_Display/DMSerifDisplay-Regular.ttf");
+}
+
+body {
+  font-family: DM, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  font-family: DM;
+  font-size: 50px;
+  white-space: nowrap;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+}
+
+h2, h3, h4, h5, h6 {
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-family: DM;
+}
+
+p {
+  margin-bottom: 10px;
+}
+
+/* ========== Layout ========== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* ========== Login Components ========== */
+.login-box {
+  margin: 0 auto;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  width: 600px;
+  min-height: 500px;
+  background: var(--contrast);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 0;
+  font-family: DM, sans-serif;
+  color: var(--text);
+}
+
+input[type=password], 
+input[type=text] {
+  padding: 8px;
+  margin-bottom: 20px;
+  background-color: transparent;
+  font-family: DM, sans-serif;
+  font-size: 24px;
+  color: var(--text);
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 3px solid var(--fade);
+  outline: none;
+  transition: border-bottom 0.6s ease;
+}
+
+input[type=password]:focus, 
+input[type=text]:focus {
+  border-bottom: 2px solid var(--text);
+}
+
+#login_button {
+  font-family: DM;
+  font-size: 16px;
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  width: 70%;
+  min-width: unset;
+  background: var(--text);
+  color: var(--background);
+  text-decoration: none;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  outline: #E9EDC9;
+  transition: 0.6s ease;
+}
+
+#login_button:hover {
+  background: var(--background);
+  color: var(--text);
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+/* ========== Course Grid ========== */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+}
+
+.course-box {
+  background: var(--pop);
+  color: var(--background);
+  padding: 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+}
+
+.course-box h2 {
+  font-size: 30px;
+  margin: 0;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.course-box:hover {
+  background: var(--fade);
+  transform: translateY(-10px);
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.course-box:hover h2 {
+  color: var(--contrast);
+}
+
+/* ========== Responsive Design ========== */
+@media (max-width: 768px) {
   .row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: -10px;
-  }
-  
-  .col {
-    flex: 1;
-    padding: 10px;
-  }
-  
-  @media (max-width: 768px) {
-    .row {
       flex-direction: column;
-    }
   }
-  
-  /* ========== Footer ========== */
-  .footer {
-    margin-top: 20px;
-    text-align: center;
-    padding: 10px;
-    background: #222;
-    color: white;
-  }
-  
+}
+
+/* ========== Footer ========== */
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  padding: 10px;
+  background: #222;
+  color: white;
+}

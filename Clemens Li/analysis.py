@@ -1,19 +1,27 @@
 import gradescopeapi
 from gradescopeapi.classes.connection import GSConnection
 
-raw_course_data = []
-courses = []
+raw_data = {}
+course_ids = []
+course_data = {}
+course_names = []
 assignments = []
 
 def get_data(connection):
-    global raw_course_data
-    raw_course_data = connection.account.get_courses()
+    global raw_data
+    raw_data = connection.account.get_courses()
     pass
 
 def categorize_data(connection):
-    global courses, assignments
-    courses = raw_course_data["student"].keys()
-    for course in courses:
-        assignments.append(connection.account.get_assignments(course))
+    global course_data, course_ids, course_names, assignments
+    course_ids = list(raw_data["student"].keys())
+    course_data = raw_data["student"]
+    for id in course_ids:
+        assignments.append(connection.account.get_assignments(id))
+        course_names.append(course_data[id].name) 
+    pass
+        
 
+# def analyze_courses(courses):
 
+# def analyze_assignments(assignments):

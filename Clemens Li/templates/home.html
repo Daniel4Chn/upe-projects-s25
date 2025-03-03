@@ -8,13 +8,14 @@
 
     <body>
         
-        <h1>Home Page</h1>
-        <p>Courses</p>
-        <p>{{ course_data }}</p>
-        <br class = big>
-        <p>Assignments</p>
-        <p>{{ assignment_data }}</p>
-
+        <h1> Courses </h1>
+        <div class = "course-grid">
+            {% for name in range(course_names|length) %}
+            <div class = "course-box">
+                <h2> {{ course_names[name] }} </h2>
+            </div>
+            {% endfor %}
+        </div>
     </body>
 
 </html>

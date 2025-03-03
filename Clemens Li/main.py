@@ -25,4 +25,4 @@ def receive_login():
 
 @app.route("/home")
 def home_screen():
-    return render_template("home.html", course_data=courses, assignment_data=assignments)
+    return render_template("home.html", course_names=an.course_names, assignments=an.assignments)
