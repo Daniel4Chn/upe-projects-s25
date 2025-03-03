@@ -179,6 +179,10 @@ input[type=text]:focus {
   color: var(--contrast);
 }
 
+/* ========== Course Details ========== */
+
+
+
 /* ========== Responsive Design ========== */
 @media (max-width: 768px) {
   .row {

@@ -26,3 +26,9 @@ def receive_login():
 @app.route("/home")
 def home_screen():
     return render_template("home.html", course_names=an.course_names, assignments=an.assignments)
+
+@app.route("/course/<int:course_index>")
+def course_screen(course_index):
+    course_name = an.course_names[course_index]
+    course_assignments = an.assignments[course_index]
+    return render_template("course.html", course_name=course_name, course_assignments=course_assignments)

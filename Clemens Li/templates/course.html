@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <title>{{ course_name }} - Academic Tracker</title>
+</head>
+<body>
+    <h1>{{ course_name }}</h1>
+    <div class="assignment-grid">
+        {% for assignment in assignments %}
+        <div class="assignment-box">
+            <h2>{{ assignment.name }}</h2>
+            <p>Due: {{ assignment.due_date }}</p>
+            <p>Score: {{ assignment.score if assignment.score else 'Not graded' }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

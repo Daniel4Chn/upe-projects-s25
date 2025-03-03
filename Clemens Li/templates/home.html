@@ -10,9 +10,9 @@
         
         <h1> Courses </h1>
         <div class = "course-grid">
-            {% for name in range(course_names|length) %}
-            <div class = "course-box">
-                <h2> {{ course_names[name] }} </h2>
+            {% for name in course_names %}
+            <div class = "course-box" onclick = "window.location.href='/course/{{ loop.index0 }}'">
+                <h2> {{ name }} </h2>
             </div>
             {% endfor %}
         </div>
