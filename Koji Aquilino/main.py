@@ -6,12 +6,14 @@ from datetime import datetime, timezone
 import geopy.distance
 import requests
 import logging
+import json
 import os
 
 app = Flask(__name__)
 nearest_station_id = None
 API_KEY = os.getenv('MBTA_API_KEY')
 URL_STOPS = f"https://api-v3.mbta.com/stops?filter[route]=Green-B&api_key={API_KEY}"
+DATA_FILE = 'waittime_data.json'
 # OPEN_MAP_URL = "https://nominatim.openstreetmap.org/reverse?lat=42.3489153&lon=-71.1009455&format=json&addressdetails=1"
 
 # Creates a custom SSL context using certifi - used to geolocate address from coordinates
@@ -83,44 +85,7 @@ def update_location():
 
     return jsonify({ "status": "success", "message": (latitude, longitude)}), 200
     
-
-
-# Retrieves all the stations along Green Line B from the MBTA API.
-def get_green_line_stops():
-    global stations
-
-    try:
-        # Ensures valid API key
-        if API_KEY is None:
-            raise ReferenceError
-
-        response = requests.get(URL_STOPS)
-        response.raise_for_status() # Raises error for bad reponse (4xx or 5xx range)
-        stops = response.json()
-
-        for stop in stops['data']:
-            stations.append(Station(stop['attributes']['name'],
-                                    stop['attributes']['latitude'],
-                                    stop['attributes']['longitude'],
-                                    stop['id']))
-
-        if len(stations) == 0:
-            raise requests.exceptions.RequestException
-        
-        first_call = False
-
-    except requests.exceptions.RequestException as request_error:
-        logging.error(f"Recevied status code {response.status_code} from MBTA API")
-        return jsonify({ "status": "error", "message": "Failed to retrieve stops"}), 500
     
-    except ReferenceError as ref_error:
-        logging.error(f"MBTA_API_KEY is an empty environmental variable")
-        return jsonify({ "status": "error", "message": "Failed to retrieve MBTA API key"}), 500
-    
-    except Exception as e:
-        logging.error(f"An unknown error occurred: {type(e).__name__}: {e}")
-
-
 
 # Gets and sends the nearest station to the user's current location to the frontend
 @app.route('/update_nearest_station')
@@ -217,6 +182,43 @@ if __name__ == '__main__':
 
 
 ### Helper methods below ###
+
+# Retrieves all the stations along Green Line B from the MBTA API.
+def get_green_line_stops():
+    global stations
+
+    try:
+        # Ensures valid API key
+        if API_KEY is None:
+            raise ReferenceError
+
+        response = requests.get(URL_STOPS)
+        response.raise_for_status() # Raises error for bad reponse (4xx or 5xx range)
+        stops = response.json()
+
+        for stop in stops['data']:
+            stations.append(Station(stop['attributes']['name'],
+                                    stop['attributes']['latitude'],
+                                    stop['attributes']['longitude'],
+                                    stop['id']))
+
+        if len(stations) == 0:
+            raise requests.exceptions.RequestException
+        
+        first_call = False
+
+    except requests.exceptions.RequestException as request_error:
+        logging.error(f"Recevied status code {response.status_code} from MBTA API")
+        return jsonify({ "status": "error", "message": "Failed to retrieve stops"}), 500
+    
+    except ReferenceError as ref_error:
+        logging.error(f"MBTA_API_KEY is an empty environmental variable")
+        return jsonify({ "status": "error", "message": "Failed to retrieve MBTA API key"}), 500
+    
+    except Exception as e:
+        logging.error(f"An unknown error occurred: {type(e).__name__}: {e}")
+
+
 
 # Calculates the distance between the current coordinates and a station's coordinates.
 # Returns the distance in meters
@@ -373,6 +375,55 @@ def log_rate_limits_mbta():
 
     except Exception as e:
         logging.error(f"Error processing rate limit headers: {type(e).__name__}: {e}")
+
+
+
+# Load stored wait time data
+def load_data():
+
+    if(os.path.exists(DATA_FILE)):
+        with open(DATA_FILE, 'r') as data:
+            try:
+                return json.load(data)
+            
+            except json.JSONDecodeError:
+                return {"cumulative_waittime": 0}
+    
+    return {"cumulative_waittime": 0}
+    
+
+
+# Save data to DATA_FILE function
+def save_data(data):
+    with open(DATA_FILE, 'w') as data_file:
+        json.dump(data, data_file)
+
+
+
+# Route to flask: post time
+@app.route('/update_cumulative_time', methods=['POST'])
+def update_cumulative_time():
+    data = load_data()
+    new_time = request.json.get('time', 0)
+    data['cumulative_waittime'] = new_time
+    save_data(data)
+    
+    return jsonify({ "status": "success" }), 200
+
+
+
+# Route to flask: get time
+@app.route('/get_cumulative_time')
+def get_cumulative_time():
+    data = load_data()
+
+    return jsonify({ "time": data["cumulative_waittime"] }), 200
+
+
+
+
+
+
 
 ##########################
 # STARTUP INSTRUCTIONS:
