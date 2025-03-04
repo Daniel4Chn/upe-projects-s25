@@ -55,3 +55,6 @@ Thumbs.db
 ngrok
 ngrok.exe
 ngrok.yml
+
+# Ignore waittime_data.json storage file
+waittime_data.json

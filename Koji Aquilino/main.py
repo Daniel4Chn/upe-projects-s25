@@ -13,13 +13,12 @@ app = Flask(__name__)
 nearest_station_id = None
 API_KEY = os.getenv('MBTA_API_KEY')
 URL_STOPS = f"https://api-v3.mbta.com/stops?filter[route]=Green-B&api_key={API_KEY}"
-DATA_FILE = 'waittime_data.json'
+DATA_FILE = 'waittime_data.json' # cross-session storage solution
 # OPEN_MAP_URL = "https://nominatim.openstreetmap.org/reverse?lat=42.3489153&lon=-71.1009455&format=json&addressdetails=1"
 
 # Creates a custom SSL context using certifi - used to geolocate address from coordinates
 # SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
 # geolocator = Nominatim(user_agent="boston_transit_tracker", ssl_context=SSL_CONTEXT)
-
 
 
 # Stores a list of Station objects representing each stop on the Green Line

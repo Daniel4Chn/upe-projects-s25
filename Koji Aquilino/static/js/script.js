@@ -1,7 +1,7 @@
 "use strict"
 
 let minimumDistanceThreshold = 10; // meters (normal=10m)
-const waittimeThreshold = 180; // seconds (normal=180s/3min), adjustable
+const waittimeThreshold = 0; // seconds (normal=180s/3min), adjustable
 const timeout = 1000; // milliseconds (normal=1000ms)
 const timeoutRetries = 3; // retries (normal=3)
 let retries = 0;
@@ -233,7 +233,6 @@ function startTimer() {
 	let timerStartTimestamp = Date.now() - (current_waittime * 1000);
 
 	timer = setInterval(() => {
-		time++;
 		current_waittime = Math.floor((Date.now() - timerStartTimestamp) / 1000);
 		updateCurrentWaitTimeDisplay();
 	}, 1000);
