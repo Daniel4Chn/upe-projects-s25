@@ -50,4 +50,4 @@ def course_screen(course_index):
     course_name = an.course_names[course_index]
     course_assignments = an.assignments[course_index]
     course_stats = an.get_stats(course_assignments)
-    return render_template("course.html", course_name=course_name, course_assignments=course_assignments, course_stats=course_stats)
+    return render_template("course.html", course_name=course_name, course_assignments=course_assignments, course_stats = course_stats)

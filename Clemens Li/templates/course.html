@@ -7,10 +7,12 @@
 <body>
     <h1>{{ course_name }}</h1>
     <div class="assignment-box">
-        <p> {{ course_stats[1] }}
-        <!-- {% for assignment in course_assignments %}
-            <p> {{ assignment }} </p>
-        {% endfor %} -->
+        <div id="timer"></div>
     </div>
+    
+    <script>
+        time = {{ course_stats[1] }}
+    </script>
+    <script src="../static/json/timer.js"></script>
 </body>
 </html>

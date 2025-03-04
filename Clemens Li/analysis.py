@@ -1,3 +1,4 @@
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 import gradescopeapi
 from gradescopeapi.classes.connection import GSConnection
 from datetime import datetime, timezone, timedelta
@@ -51,13 +52,10 @@ def average(course_assignments):
     return points_earned / points_possible
 
 def next_due_date(course_assignments):
-    global stats
     closest_date = course_assignments[len(course_assignments)-1].due_date
     now = datetime.now(timezone(timedelta(hours=-5)))
-    print(now)
     for assignment in course_assignments:
-        if assignment.submissions_status is not None and assignment.due_date > now:
+        if assignment.submissions_status is not None and assignment.due_date is not None and assignment.due_date > now:
             if assignment.due_date < closest_date:
                 closest_date = assignment.due_date
-    return closest_date.strftime("%Y-%m-%d %H:%M:%S")
-
+    return int(closest_date.timestamp() * 1000)
