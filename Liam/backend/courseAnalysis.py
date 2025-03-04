@@ -4,13 +4,8 @@ from linearSolver import minvertices;
 
 courseDict = {}
 graph = {}
+my_hubs = ["Critical Thinking", "Critical Thinking 2","Research and Information Literacy", "Research and Information Literacy 2", "Teamwork/Collaboration", "Teamwork/Collaboration 2","Creativity/Innovation", "Creativity/Innovation 2","First-Year Writing Seminar", "Writing, Research, and Inquiry","Writing-Intensive Course", "Writing-Intensive Course 2","Oral and/or Signed Communication", "Digital/Multimedia Expression", "The Individual in Community", "Global Citizenship and Intercultural Literacy", "Global Citizenship and Intercultural Literacy 2", "Ethical Reasoning", "Quantitative Reasoning I", "Quantitative Reasoning II", "Scientific Inquiry I", "Scientific Inquiry II", "Social Inquiry", "Philosophical Inquiry and Life's Meanings", "Aesthetic Exploration", "Historical Consciousness"]
 
-connection = sqlite3.connect("courses.db")
-cursor = connection.cursor()
-
-# res = connection.execute("SELECT * FROM COURSE")
-# row = res.fetchone()
-# print(row)
 
 # Copied from scrapenstore.py
 def initCourse(title, description):
@@ -22,6 +17,8 @@ def initCourse(title, description):
     return course
 
 def fetchData():
+    connection = sqlite3.connect("courses.db")
+    cursor = connection.cursor()
     res = connection.execute("SELECT * FROM COURSE")
     data = res.fetchall()
 
@@ -41,6 +38,39 @@ def createBipartiteGraph():
             if courseDict[course][cat] == 1:
                 graph[course][cat] = 1
     return graph
+
+def processList(hubs=my_hubs):
+    fetchData()
+    graph = {}
+    V = {}
+    for cat in hubs:
+        V[cat] = 1
+    
+    for course in courseDict:
+        graph[course] = {}
+        for _, cat in my_classes:
+            if courseDict[course][cat] == 1:
+                if cat in V:
+                    graph[course][cat] = 1
+                if cat == "Social Inquiry I" and "Social Inquiry" in V:
+                    graph[course]["Social Inquiry"] = 1
+                if cat == "Social Inquiry II" and "Social Inquiry" in V:
+                    graph[course]["Social Inquiry"] = 1
+                if cat == "Global Citizenship and Intercultural Literacy" and "Global Citizenship and Intercultural Literacy 2" in V:
+                    graph[course]["Global Citizenship and Intercultural Literacy 2"] = 1
+                if cat == "Writing-Intensive Course" and "Writing-Intensive Course 2" in V:
+                    graph[course]["Writing-Intensive Course 2"] = 1
+                if cat == "Critical Thinking" and "Critical Thinking 2" in V:
+                    graph[course]["Critical Thinking 2"] = 1
+                if cat == "Research and Information Literacy" and "Research and Information Literacy 2" in V:
+                    graph[course]["Research and Information Literacy 2"] = 1
+                if cat == "Teamwork/Collaboration" and "Teamwork/Collaboration 2" in V:
+                    graph[course]["Teamwork/Collaboration 2"] = 1
+                if cat == "Creativity/Innovation" and "Creativity/Innovation 2" in V:
+                    graph[course]["Creativity/Innovation 2"] = 1
+
+    choices = minvertices(graph, courseDict, V)
+    return choices
 
 def main():
     fetchData()

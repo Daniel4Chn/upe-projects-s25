@@ -17,8 +17,22 @@ def minvertices(G, U, V):
     minVertices += lpSum(courseUsed[course] for course in U), "numCourses"
 
     for hub in V:
+        cap = 1
+        if (hub == "Creativity/Innovation" and "Creativity/Innovation 2" in V):
+            cap = 2
+        if (hub == "Teamwork/Collaboration" and "Teamwork/Collaboration 2" in V):
+            cap = 2
+        if (hub == "Research and Information Literacy" and "Research and Information Literacy 2" in V):
+            cap = 2
+        if (hub == "Critical Thinking" and "Critical Thinking 2" in V):
+            cap = 2
+        if (hub == "Writing-Intensive Course" and "Writing-Intensive Course 2" in V):
+            cap = 2
+        if (hub == "Global Citizenship and Intercultural Literacy" and "Global Citizenship and Intercultural Literacy 2" in V):
+            cap = 2
+        
         # For each hub unit, create the constraint that at least one course must fulfill that unit
-        minVertices += lpSum(courseUsed[course] for course in U if hub in G[course]) >= 1, f"Cover_{hub}"
+        minVertices += lpSum(courseUsed[course] for course in U if hub in G[course]) >= cap, f"Cover_{hub}"
     
     # Uses a linear optimization solver to solve given the constraints we've created
     minVertices.solve(GLPK(msg=True))
