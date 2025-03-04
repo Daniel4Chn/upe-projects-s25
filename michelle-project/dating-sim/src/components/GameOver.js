@@ -12,12 +12,21 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
   // Determine the ending based on relationship value and ending type
   const getEnding = () => {
     // Check for special bad endings first - these override everything else
-    if (selectedTea.id === 'green-tea' && endingType === 'special-bad-ending') {
-      return {
-        title: "You Can Never Leave",
-        description: `As you try to excuse yourself, Green Tea's smile freezes. "No, dear ${name}. We're just getting started." The door mysteriously locks, and you realize you might be here for... quite some time. Green Tea will take very good care of you, whether you like it or not.`,
-        image: 'images/yandere.png'
-      };
+    if (selectedTea.id === 'green-tea') {
+      if (endingType === 'special-bad-ending') {
+        return {
+          title: "You Can Never Leave",
+          description: `As you try to excuse yourself, Green Tea's smile freezes. "No, dear ${name}. We're just getting started." The door mysteriously locks, and you realize you might be here for... quite some time. Green Tea will take very good care of you, whether you like it or not.`,
+          image: 'images/yandere.png'
+        };
+      }
+      if (relationship < 35){
+        return {
+          title: "Anything For You Dear",
+          description: `*Green Tea smiles are you sliently* You have a feeling that no matter what you do, you will always up with her, it's like fate has finally locked it's jaws onto you... *blissfully, you walk away with her*`,
+          image: 'images/yandere.png'
+        };
+      }
     }
     
     if (selectedTea.id === 'chrysanthemum' && endingType === 'special-bad-ending') {
@@ -109,9 +118,11 @@ const GameOver = ({ endingType, selectedTeaId, relationships, teas, playerName }
       
       <div className="matchmaker-comment">
         <p>
-          {relationship >= 35 ? 
-            `The Tea Matchmaker smiles warmly at ${name}, pleased to have helped you find your perfect tea match.` :
-            `The Tea Matchmaker nods thoughtfully. "Perhaps we should try again another evening to find your perfect tea match, ${name}."`}
+          {selectedTea.id === 'green-tea' ?
+            `The Tea Matchmaker has been asking around and looking for you...` :
+            relationship >= 35 ? 
+              `The Tea Matchmaker smiles warmly at ${name}, pleased to have helped you find your perfect tea match.` :
+              `The Tea Matchmaker nods thoughtfully. "Perhaps we should try again another evening to find your perfect tea match, ${name}."`}
         </p>
       </div>
       

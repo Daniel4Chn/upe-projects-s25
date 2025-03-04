@@ -310,6 +310,32 @@ function App() {
 
   // Return to locations after a tea date
   const finishTeaDate = () => {
+    // Check if the player is trying to leave Green Tea voluntarily (not by matchmaker interruption)
+    if (
+      gameState.currentTea && 
+      gameState.currentTea.id === 'green-tea' && 
+      !gameState.matchmakerInterruption
+    ) {
+    
+      // Add dialogue to history about trying to leave
+      const updatedDialogueHistory = [
+        ...gameState.dialogueHistory,
+        { character: gameState.player.name, text: "I think I should get going now..." },
+        { character: gameState.currentTea.name, text: `No, ${gameState.player.name}.` }
+      ];
+      
+      // Trigger special bad ending for Green Tea
+      setGameState({
+        ...gameState,
+        dialogueHistory: updatedDialogueHistory,
+        currentScreen: 'game-over',
+        endingType: 'special-bad-ending',
+        selectedTeaId: 'green-tea'
+      });
+      return;
+    }
+
+    // Normal flow for other teas or matchmaker interruption continues below
     // Update tea dates completed
     const updatedTeaDatesCompleted = gameState.player.teaDatesCompleted + 1;
     
