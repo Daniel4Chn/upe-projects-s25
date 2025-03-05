@@ -4,15 +4,25 @@
     <link rel="stylesheet" href="../static/css/style.css">
     <title>{{ course_name }} - Academic Tracker</title>
 </head>
-<body>
+<body >
     <h1>{{ course_name }}</h1>
+    <div id="timer"></div>
     <div class="assignment-box">
-        <div id="timer"></div>
+        <h2> Average: {{ course_stats[0] }} </h2>
+        <hr class="divider">
+        <h3>Assignments</h3>
+        <h3> ~ </h3>
+        {% for assignment in course_assignments %}
+            <h4> {{ assignment.name }}: {{assignment.grade}} / {{assignment.max_grade}} </h4>
+        {% endfor %}
     </div>
-    
+
     <script>
         time = {{ course_stats[1] }}
     </script>
+
     <script src="../static/json/timer.js"></script>
+
 </body>
+
 </html>

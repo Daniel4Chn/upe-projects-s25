@@ -1,11 +1,16 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for
 import gradescopeapi
 from gradescopeapi.classes.connection import GSConnection
+from functools import wraps
+import time
 import analysis as an
 
 email = ""
 password = ""
 file = ""
+
+login_timestamp = 0
+LOGIN_COOLDOWN = 2
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable caching
@@ -21,18 +26,42 @@ def add_header(response):
 def index():
     return render_template("index.html")
 
+def limit_login():
+    def decorator(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            global login_timestamp
+            current_time = time.time()
+            
+            # Check if enough time has passed since last login attempt
+            if current_time - login_timestamp < LOGIN_COOLDOWN:
+                return jsonify({
+                    "status": "error",
+                    "message": "Please wait before trying again"
+                }), 429  # Too Many Requests
+            
+            login_timestamp = current_time
+            return f(*args, **kwargs)
+        return wrapped
+    return decorator
+    
+
 @app.route("/login", methods=["POST"])
+@limit_login()
 def receive_login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
-    connection = GSConnection()
-    connection.login(email, password)
-    temp_c = an.get_data(connection)
-    temp_a = an.categorize_data(connection)
-    file = open("temp.txt", "w")
-    file.write(str(temp_c) + "\n\n" + str(temp_a))
-    return jsonify({"status": "success", "redirect": "/home", "message": (email, password)})
+    try:
+        data = request.json
+        email = data.get("email")
+        password = data.get("password")
+        connection = GSConnection()
+        connection.login(email, password)
+        temp_c = an.get_data(connection)
+        temp_a = an.categorize_data(connection)
+        file = open("temp.txt", "w")
+        file.write(str(temp_c) + "\n\n" + str(temp_a))
+        return jsonify({"status": "success", "redirect": "/home", "message": (email, password)})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 401
 
 @app.route("/home")
 def home_screen():

@@ -29,9 +29,10 @@ def categorize_data(connection):
     return assignments
 
 def get_stats(course_assignments):
-    stats = [] # 0:average, 1:next_due_date
-    stats.append(average(course_assignments))
+    stats = [] # 0:average_display, 1:next_due_date, 2:average
+    stats.append(average_display(average(course_assignments)))
     stats.append(next_due_date(course_assignments))
+    stats.append(average(course_assignments))
     return stats
 
 # def analyze_courses(courses):
@@ -50,6 +51,9 @@ def average(course_assignments):
     if len(average) == 0:
         return "No grades found"
     return points_earned / points_possible
+
+def average_display(average):
+    return f"{round(average*100, 2)}%"
 
 def next_due_date(course_assignments):
     closest_date = course_assignments[len(course_assignments)-1].due_date
