@@ -1,4 +1,4 @@
-# UPE-Project-s25
+# Boston T Tracker
 
 ## Introduction
 This project is a web-based application that tracks the time spent waiting for the Boston T (Green Line) to arrive. It uses real-time geolocation to identify when a user enters a station area, and starts a timer after a brief buffer period (distinguishing between waiting and simply passing). The application interfaces with the MBTA API to retrieve and display upcoming train predictions for eastbound and westbound trains from the nearest station. When the user leaves a station, the waiting time exceeding a configurable threshold is added to a cumulative counter. The backend utilizes Flask for data processing and API communications, supplemented the frontend implementing location tracking, mapping with Leaflet.js, and a UI built with Javascript and Bootstrap styling.
