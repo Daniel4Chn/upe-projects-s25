@@ -39,7 +39,6 @@ MBTA_API_KEY=your_api_key_here
 ```
 npm install
 ```
-<br>
 
 ### Running the Application
 1. Start the Flask server
