@@ -2,7 +2,7 @@
 
 // Time upon entering station that will not count toward the timer
 const STATION_PASSING_THRESHOLD = 5000; // milliseconds (if just passing a station while walking)
-const MINIMUM_DISTANCE_THRESHOLD = 300; // meters (normal=20m)
+const MINIMUM_DISTANCE_THRESHOLD = 20; // meters (normal=20m)
 const WAITTIME_THRESHOLD = 0; // seconds (normal=180s/3min), adjustable
 const TIMEOUT = 5000; // milliseconds (normal=5000ms)
 const TIMEOUT_RETRIES = 3; // retries (normal=3)
