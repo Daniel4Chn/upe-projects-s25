@@ -1,0 +1,949 @@
+/* Tea House Dating Sim - Enhanced CSS */
+
+/* Color Variables */
+:root {
+  --tea-brown: #8B4513;
+  --tea-light-brown: #A67C52;
+  --tea-green: #4DAA57;
+  --tea-dark-green: #2E5D34;
+  --tea-red: #D64550;
+  --tea-light: #F8F4E1;
+  --tea-cream: #F2E9D8;
+  --tea-dark: #36261E;
+  --tea-black: #201A17;
+  --tea-chrysanthemum: #F2B5D4;
+  --tea-matcha: #7AAE62;
+  --tea-rooibos: #C97C5D;
+  
+  --font-main: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-accent: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --box-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.2);
+  --transition-speed: 0.3s;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--tea-light);
+  color: var(--tea-dark);
+  line-height: 1.6;
+}
+
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(248, 244, 225, 0.95);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-accent);
+  margin-bottom: var(--spacing-md);
+  color: var(--tea-brown);
+}
+
+h1 {
+  font-size: 2.5rem;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+h2 {
+  font-size: 2rem;
+  border-bottom: 2px solid var(--tea-light-brown);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+button {
+  background-color: var(--tea-brown);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all var(--transition-speed) ease;
+  margin: var(--spacing-sm);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background-color: var(--tea-light-brown);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+input {
+  padding: var(--spacing-md);
+  border: 2px solid var(--tea-light-brown);
+  border-radius: var(--border-radius);
+  font-family: var(--font-main);
+  font-size: 1rem;
+  margin-bottom: var(--spacing-md);
+  width: 100%;
+  max-width: 400px;
+  transition: border-color var(--transition-speed) ease;
+}
+
+input:focus {
+  border-color: var(--tea-brown);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+}
+
+/* Start Screen */
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  text-align: center;
+  background-color: var(--tea-dark);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  position: relative;
+}
+
+.start-screen h1 {
+  font-size: 3.5rem;
+  margin-bottom: var(--spacing-lg);
+  color: var(--tea-light);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.start-screen p {
+  color: var(--tea-cream);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+.start-screen button {
+  background-color: var(--tea-light-brown);
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+}
+
+/* Name Input Screen */
+.name-input-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  background-color: var(--tea-cream);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: var(--box-shadow);
+}
+
+.name-input-screen h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Matchmaker Screen */
+.matchmaker-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--tea-cream);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-top: 2rem;
+}
+
+.matchmaker-portrait {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 5px solid var(--tea-brown);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.matchmaker-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dialogue-text {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  max-width: 800px;
+}
+
+.dialogue-text::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 15px 15px 15px;
+  border-style: solid;
+  border-color: transparent transparent white transparent;
+}
+
+/* Tea Select */
+.tea-select {
+  padding: 2rem;
+  background-color: var(--tea-cream);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.tea-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.tea-card {
+  background-color: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  transition: all var(--transition-speed) ease;
+  cursor: pointer;
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.tea-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow-hover);
+}
+
+.tea-card.selected {
+  border-color: var(--tea-green);
+}
+
+.tea-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.tea-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-speed) ease;
+}
+
+.tea-card:hover .tea-image img {
+  transform: scale(1.05);
+}
+
+.tea-card h3, .tea-card p {
+  padding: 0 1rem;
+}
+
+.tea-card h3 {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+}
+
+.tea-type {
+  color: var(--tea-light-brown);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.selection-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--tea-green);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.selection-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.selection-status p {
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.selection-status button.ready {
+  background-color: var(--tea-green);
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+}
+
+.selection-status button.not-ready {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Locations Screen */
+.locations-screen {
+  padding: 2rem;
+  background-color: var(--tea-cream);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.location-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: 
+    "info"
+    "navigation"
+    "tea-cups";
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .location-container {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+      "info navigation"
+      "tea-cups tea-cups";
+  }
+}
+
+.location-info {
+  grid-area: info;
+  background-color: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.location-image {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.location-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.location-info h2 {
+  padding: 1rem;
+  margin: 0;
+  border-bottom: 1px solid #eee;
+}
+
+.location-info p {
+  padding: 1rem;
+}
+
+.rooms-counter {
+  padding: 1rem;
+  background-color: var(--tea-light);
+  text-align: center;
+  font-weight: bold;
+}
+
+.location-navigation {
+  grid-area: navigation;
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.tea-cups-present {
+  grid-area: tea-cups;
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.location-navigation h3, .tea-cups-present h3 {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.location-buttons, .tea-cup-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.location-button {
+  background-color: var(--tea-light-brown);
+  flex: 1 0 calc(50% - 1rem);
+  min-width: 120px;
+}
+
+.location-button.visited {
+  background-color: #ccc;
+  color: #666;
+}
+
+.tea-cup-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  border: 2px solid var(--tea-light-brown);
+  color: var(--tea-dark);
+  padding: 1rem;
+  flex: 1 0 calc(33.333% - 1rem);
+  min-width: 100px;
+}
+
+.tea-cup-button img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+  border: 3px solid var(--tea-light-brown);
+}
+
+.tea-cup-button:hover {
+  background-color: var(--tea-light);
+}
+
+.final-decision-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.final-decision-button button {
+  background-color: var(--tea-red);
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+}
+
+.matchmaker-prompt {
+  background-color: var(--tea-light);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.matchmaker-prompt p {
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+/* Tea Room */
+.tea-room {
+  padding: 2rem;
+  background-color: var(--tea-cream);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.room-description {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  font-style: italic;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tea-waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+}
+
+.tea-portrait {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 5px solid var(--tea-light-brown);
+}
+
+.tea-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tea-waiting h3 {
+  margin-bottom: 0.5rem;
+}
+
+.tea-type {
+  font-style: italic;
+  color: var(--tea-light-brown);
+  margin-bottom: 1.5rem;
+}
+
+.tea-anticipation {
+  background-color: var(--tea-light);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.approach-button {
+  background-color: var(--tea-green);
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.return-to-lobby {
+  margin-top: 2rem;
+  background-color: var(--tea-light-brown);
+}
+
+/* Dialogue Screen */
+.dialogue-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background-color: var(--tea-cream);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: var(--spacing-lg);
+}
+
+.dialogue-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tea-mood {
+  font-style: italic;
+  color: var(--tea-light-brown);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.dialogue-text {
+  background-color: var(--tea-light);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin: 1rem 0;
+  position: relative;
+}
+
+.dialogue-history {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.dialogue-history h4 {
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.history-scrollable {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.history-entry {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.tea-compatibility {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.compatibility-meter {
+  height: 12px;
+  background-color: #eee;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.meter-fill {
+  height: 100%;
+  background-color: var(--tea-green);
+  transition: width var(--transition-speed) ease;
+}
+
+/* Dialogue System */
+.choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.choice-button {
+  background-color: white;
+  color: var(--tea-dark);
+  border: 2px solid var(--tea-light-brown);
+  text-align: left;
+  padding: 1rem;
+  transition: all var(--transition-speed) ease;
+}
+
+.choice-button:hover {
+  background-color: var(--tea-light);
+  border-color: var(--tea-brown);
+}
+
+.final-choice {
+  background-color: var(--tea-light);
+  border-color: var(--tea-green);
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.final-choice:hover {
+  background-color: rgba(77, 170, 87, 0.1);
+  border-color: var(--tea-green);
+}
+
+.dialogue-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.choices-remaining {
+  text-align: center;
+}
+
+.progress-bar {
+  height: 10px;
+  background-color: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.progress {
+  height: 100%;
+  background-color: var(--tea-light-brown);
+  transition: width var(--transition-speed) ease;
+}
+
+.end-dialogue {
+  align-self: center;
+  background-color: var(--tea-light-brown);
+}
+
+/* Matchmaker Interruption */
+.matchmaker-interruption-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.matchmaker-popup {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.5s ease-in-out;
+}
+
+.matchmaker-popup .matchmaker-portrait {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1.5rem;
+}
+
+.matchmaker-message {
+  text-align: center;
+}
+
+.matchmaker-message h3 {
+  color: var(--tea-red);
+  margin-bottom: 1rem;
+}
+
+.countdown {
+  margin-top: 1.5rem;
+  font-style: italic;
+  color: #888;
+  animation: pulse 1.5s infinite;
+}
+
+/* Final Selection Screen */
+.final-selection-screen {
+  padding: 2rem;
+  background-color: var(--tea-cream);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.final-selection-screen h2 {
+  margin-bottom: 1rem;
+}
+
+.tea-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.tea-option {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+  transition: transform var(--transition-speed) ease;
+}
+
+.tea-option:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow-hover);
+}
+
+.tea-option img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 4px solid var(--tea-light-brown);
+}
+
+.tea-option h3 {
+  margin-bottom: 0.5rem;
+}
+
+.tea-option button {
+  background-color: var(--tea-green);
+  margin-top: 1rem;
+}
+
+.return-button {
+  background-color: var(--tea-light-brown);
+  margin-top: 1rem;
+}
+
+/* Game Over Screen */
+.game-over-container {
+  padding: 2rem;
+  background-color: var(--tea-cream);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.ending-result {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: var(--box-shadow);
+}
+
+.ending-image {
+  max-width: 300px;
+  height: 300px;
+  margin: 0 auto 1.5rem;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ending-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ending-result h2 {
+  color: var(--tea-brown);
+  margin-bottom: 1rem;
+}
+
+.tea-specific-ending {
+  background-color: var(--tea-light);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-top: 1.5rem;
+  font-style: italic;
+}
+
+.tea-selection-summary {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: var(--box-shadow);
+}
+
+.chosen-tea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chosen-tea img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 4px solid var(--tea-light-brown);
+}
+
+.matchmaker-comment {
+  background-color: var(--tea-light);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.game-over-container button {
+  background-color: var(--tea-brown);
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .App {
+    padding: 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .tea-list, .tea-selection {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .dialogue-container {
+    padding: 1rem;
+  }
+  
+  .tea-option img {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .ending-image {
+    height: 200px;
+  }
+}
