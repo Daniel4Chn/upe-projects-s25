@@ -408,13 +408,13 @@ function updateCurrentWaitTimeDisplay() {
 // Updates cumulative wait time display
 function updateCumulativeWaitTimeDisplay() {
 	if(cumulativeWaittime < 0) {
-		document.getElementById("cumulative-waittime-status").innerText = "Total Time Saved: "
+		document.getElementById("cumulative-waittime-status").innerText = "Time Saved: "
 		document.getElementById("cumulative-minutes").innerText = -cumulativeWaittime / 60 < 10 ? '0' + Math.floor(-cumulativeWaittime / 60) : Math.floor(-cumulativeWaittime / 60);
 		document.getElementById("cumulative-ten-seconds").innerText = (Math.floor(-cumulativeWaittime / 10)) % 6;
 		document.getElementById("cumulative-seconds").innerText = -cumulativeWaittime % 10;
 	}
 	else {
-		document.getElementById("cumulative-waittime-status").innerText = "Total Time Wasted: "
+		document.getElementById("cumulative-waittime-status").innerText = "Time Wasted: "
 		document.getElementById("cumulative-minutes").innerText = cumulativeWaittime / 60 < 10 ? '0' + Math.floor(cumulativeWaittime / 60) : Math.floor(cumulativeWaittime / 60);
 		document.getElementById("cumulative-ten-seconds").innerText = (Math.floor(cumulativeWaittime / 10)) % 6;
 		document.getElementById("cumulative-seconds").innerText = cumulativeWaittime % 10;

@@ -52,7 +52,7 @@ h1 {
 
 
 #current-location-map {
-	height: 450px;
+	height: 260px;
 	width: 100%;
 }
 
@@ -71,10 +71,6 @@ h1 {
         padding-top: 1.5rem;
         padding-bottom: 1.5rem;
         margin-top: 2px;
-    }
-
-	#nearest-train-map {
-		height: 300px;
 	}
 }
 
@@ -83,7 +79,7 @@ h1 {
 }
 
 #current-station-id, #waittime-box {
-	font-size: 27px;
+	font-size: 22px;
 }
 
 #eastbound-train, #westbound-train, 
