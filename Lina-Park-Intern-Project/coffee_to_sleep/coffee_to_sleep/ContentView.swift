@@ -64,7 +64,7 @@ struct ContentView: View {
     func calculateBedtime() {
         do {
             let config = MLModelConfiguration()
-            let model = try coffee(configuration: config)
+            let model = try SleepCalculatorC(configuration: config)
 
             let components = Calendar.current.dateComponents([.hour, .minute], from: wakeUp)
             let hour = (components.hour ?? 0) * 60 * 60
