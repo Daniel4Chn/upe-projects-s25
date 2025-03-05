@@ -1,4 +1,5 @@
 import sqlite3;
+import re;
 from scrapenstore import my_classes;
 from linearSolver import minvertices;
 
@@ -39,14 +40,26 @@ def createBipartiteGraph():
                 graph[course][cat] = 1
     return graph
 
-def processList(hubs=my_hubs):
+def processList(hubs=my_hubs, rem_list=[], filterCAS=False, numFilter=1000):
     fetchData()
+    copyDict = courseDict.copy()
+
+    for course in courseDict:
+        match = re.search(r"\d{3}", course)
+        if course in rem_list:
+            del copyDict[course]
+        elif filterCAS and "CAS" not in course:
+            del copyDict[course]
+        elif match and int(match.group()) > numFilter:
+            del copyDict[course]
+            
+
     graph = {}
     V = {}
     for cat in hubs:
         V[cat] = 1
     
-    for course in courseDict:
+    for course in copyDict:
         graph[course] = {}
         for _, cat in my_classes:
             if courseDict[course][cat] == 1:
@@ -69,8 +82,11 @@ def processList(hubs=my_hubs):
                 if cat == "Creativity/Innovation" and "Creativity/Innovation 2" in V:
                     graph[course]["Creativity/Innovation 2"] = 1
 
-    choices = minvertices(graph, courseDict, V)
-    return choices
+    choices = minvertices(graph, copyDict, V)
+    out = []
+    for course in choices:
+        out.append({ "course_code" : course, "title" : courseDict[course]["Title"], "description" : courseDict[course]["Description"] })
+    return out
 
 def main():
     fetchData()
