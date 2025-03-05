@@ -6,12 +6,18 @@ const MINIMUM_DISTANCE_THRESHOLD = 20; // meters (normal=20m)
 const WAITTIME_THRESHOLD = 0; // seconds (normal=180s/3min), adjustable
 const TIMEOUT = 5000; // milliseconds (normal=5000ms)
 const TIMEOUT_RETRIES = 3; // retries (normal=3)
+const DEFAULT_MAP_COORDINATES = [42.3601, -71.0589]; // Boston
 
 let locationEntryTimestamp, timer, timerBuffer, bufferTime;
 let nearestStation;
 let retries = 0;
 let currentWaittime = 0; // seconds
 let cumulativeWaittime = 0; // seconds
+
+let map;
+let userMarker;
+let stationMarkers = [];
+
 
 
  
@@ -56,14 +62,65 @@ let handleError = (error) => {
 };
 
 
+// initialize a new map for user location
+function initMap() {
+
+	const mapContainer = document.getElementById('current-location-map');
+	const [DEFAULT_LATITUDE, DEFAULT_LONGITUDE] = DEFAULT_MAP_COORDINATES;
+
+	if (!mapContainer) {
+        console.error("Map container element not found!");
+        return;
+    }
+
+	map = L.map('current-location-map', {
+		dragging: false,
+		touchZoom: false,
+		scrollWheelZoom: false,
+		doubleClickZoom: false,
+		keyboard: false,
+		zoomControl: false
+	}).setView([DEFAULT_LATITUDE, DEFAULT_LONGITUDE], 13, {
+		animate: true,
+		pan: {
+			duration: 1
+		}
+	});
+
+	// Add OpenStreetMap tiles to map: modifiable
+	L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+		attribution: '© OpenStreetMap contributors, © CARTO'
+	}).addTo(map);
+
+	// Create new user marker on the map
+	userMarker = L.marker([0, 0], {
+		icon: L.divIcon({
+			html: '<div style="background-color: blue; border-radius: 50%; width: 16px; height: 16px; border: 2px solid white;"></div>',
+            className: 'user-location-marker'
+		})
+	});
+
+	console.log("success")
+}
 
 // Run on successful callback: Sends location to backend
 function updateLocation(position) {
 
-	const latitude = position.coords.latitude;
+ 	const latitude = position.coords.latitude;
 	const longitude = position.coords.longitude;
 	const accuracy = position.coords.accuracy;
 	const speed = position.coords.speed || 0; // in m/s
+
+	if(map && userMarker) {
+		userMarker.setLatLng([latitude, longitude]).addTo(map);
+		map.setView([latitude, longitude], 15, {
+			animate: true,
+			pan: {
+				duration: 1
+			}
+		})
+	}
+
 
 	fetch("/update_location", {
 		method: "POST",
@@ -107,18 +164,39 @@ function trackLocation() {
 }
 
 
-// Updates nearest station to user
+// Updates nearest station to user 
+// Fetches longitude and latitude of nearest station
 async function updateNearestStation() {
 	return fetch("/update_nearest_station")
 	.then(response => response.json())
 	.then(data => {
 
-		nearestStation = data.message[1];
+		nearestStation = data.nearest_station[1];
 		
+		if(map) {
+			
+			// Removes previous station markers
+			stationMarkers.forEach(marker => map.removeLayer(marker));
+			stationMarkers = [];
+
+			// Adds the station marker of the nearest station
+			const stationMarker = L.marker([data.station_coordinates[0], data.station_coordinates[1]], {
+				icon: L.divIcon({
+					html: `<div style="position: relative; width: 18px; height: 18px;">
+							  <div style="background-color: green; width: 100%; height: 100%; border-radius: 50%; border: 2px solid white;"></div>
+							  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, 20%); color: black; font-size: 12px; font-weight: bold;">${nearestStation}</div>
+						   </div>`,
+					className: 'station-marker'
+				})
+			}).addTo(map);
+
+			stationMarker.bindPopup(data.nearest_station[1]);
+			stationMarkers.push(stationMarker);
+		}
 
 		// If currently at station: starts buffer for if passing,
 		// then runs function startTimer()
-		if(data.message[0] <= MINIMUM_DISTANCE_THRESHOLD) {
+		if(data.nearest_station[0] <= MINIMUM_DISTANCE_THRESHOLD) {
 
 			// Provides a buffer for when only passing 
 			// a station, to not start the timer
@@ -129,7 +207,7 @@ async function updateNearestStation() {
 				document.getElementById("station-header").innerText = "Approaching Station: ";
 			}
 
-			document.getElementById("station-status").innerText = data.message[1];
+			document.getElementById("station-status").innerText = data.nearest_station[1];
 		}
 
 		// Not at station: ends timer and adds time,
@@ -138,8 +216,8 @@ async function updateNearestStation() {
 			stopTimerBuffer();
 			stopTimer();
 
-			document.getElementById("station-header").innerText = `${data.message[1]}: `;
-			document.getElementById("station-status").innerText = `${Math.trunc(data.message[0])} meters away`;
+			document.getElementById("station-header").innerText = `${data.nearest_station[1]}: `;
+			document.getElementById("station-status").innerText = `${Math.trunc(data.nearest_station[0])} meters away`;
 		}
 	})
 	.catch(error => console.error("Error retrieving station data:", error));
@@ -267,6 +345,7 @@ function startTimer() {
 }
 
 
+
 // Stops the current wait timer
 function stopTimer() {
 	if(timer) {
@@ -275,6 +354,7 @@ function stopTimer() {
 		timer = null;
 	}
 }
+
 
 
 // Adds the time to the cumulative time counter
@@ -341,6 +421,8 @@ function updateCumulativeWaitTimeDisplay() {
 	}
 }
 
+
+
 // Matches current waittime height to the left column elements
 function matchHeight() {
     // Get height of left column
@@ -352,21 +434,19 @@ function matchHeight() {
     }
 }
 
+
+
 // Call on page load and window resize
 window.addEventListener('load', matchHeight);
 window.addEventListener('resize', matchHeight);
 
+
+
 // Fetches cumulative time of previous session on page load
 document.addEventListener('DOMContentLoaded', () => {
+	trackLocation();
+	initMap();
 	fetchCumulativeTime();
 	updateCumulativeWaitTimeDisplay();
 })
-
-
-
-// Alternative updates location every 5 seconds
-// setInterval(trackLocation, 5000);
-
-// Starts tracking as soon as page loads
-trackLocation();
 

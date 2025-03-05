@@ -51,9 +51,9 @@ h1 {
 
 
 
-#nearest-train-map {
+#current-location-map {
 	height: 450px;
-	background-color: bisque !important;
+	width: 100%;
 }
 
 #cumulative-waittime-row {

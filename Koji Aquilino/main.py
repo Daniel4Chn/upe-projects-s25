@@ -80,8 +80,7 @@ def update_location():
         print(f"Distance from {station.getName()}: {round(get_station_distance(latitude, longitude, station), 2)} meters")
     '''
 
-    logging.info(f"Retrieved location at {latitude}, {longitude} at {data.get('speed')} km/hr - Accuracy: within {data.get('accuracy')} meters")
-
+    logging.info(f"Retrieved location at {latitude}, {longitude} at {round(data.get('speed'), 3)} km/hr - Accuracy: within {data.get('accuracy')} meters")
     return jsonify({ "status": "success", "message": (latitude, longitude)}), 200
     
     
@@ -105,7 +104,7 @@ def get_nearest_station():
 
         logging.info(f"Retrieved nearest station - {nearest_station.getID()}: {nearest_station.getName()} at {min_distance} meters away")
 
-        return jsonify({ "status": "success", "message": (min_distance, nearest_station.getName()) }), 200
+        return jsonify({ "status": "success", "nearest_station": (min_distance, nearest_station.getName()), "station_coordinates": (nearest_station.getLatitude(), nearest_station.getLongitude()) }), 200
         
     except Exception as e:
 
@@ -174,10 +173,9 @@ def get_next_train():
 
 
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 ### Helper methods below ###
@@ -330,7 +328,6 @@ def get_station_from_train(vehicle_id):
     except Exception as e:
         logging.error(f"An unknown error occurred when retrieving current train location: {type(e).__name__}: {e}")
         return None
-
 
 
 
