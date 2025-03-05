@@ -1,5 +1,8 @@
 # Tea House Dating Sim 🍵
 
+# Video Demo: 
+https://drive.google.com/file/d/13fn3jUoxt_Xdz9ojSq2P00TJktYLojwR/view?usp=sharing
+
 ## Overview
 Tea House Dating Sim is an interactive point-n-click game where you visit a tea house for speed dating... with tea cups! Choose your favorite teas to meet, engage in conversation, and potentially find your perfect cup of tea.
 
