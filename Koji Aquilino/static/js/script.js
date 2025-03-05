@@ -1,36 +1,42 @@
 "use strict"
 
-let minimumDistanceThreshold = 10; // meters (normal=10m)
-const waittimeThreshold = 0; // seconds (normal=180s/3min), adjustable
-const timeout = 1000; // milliseconds (normal=1000ms)
-const timeoutRetries = 3; // retries (normal=3)
-let retries = 0;
+// Time upon entering station that will not count toward the timer
+const STATION_PASSING_THRESHOLD = 5000; // milliseconds (if just passing a station while walking)
+const MINIMUM_DISTANCE_THRESHOLD = 300; // meters (normal=20m)
+const WAITTIME_THRESHOLD = 0; // seconds (normal=180s/3min), adjustable
+const TIMEOUT = 5000; // milliseconds (normal=5000ms)
+const TIMEOUT_RETRIES = 3; // retries (normal=3)
 
-let nearest_station;
-let timer;
-let current_waittime = 0 // seconds
-let cumulative_waittime = 0 // seconds
-let isAtStation = false;
+let locationEntryTimestamp, timer, timerBuffer, bufferTime;
+let nearestStation;
+let retries = 0;
+let currentWaittime = 0; // seconds
+let cumulativeWaittime = 0; // seconds
 
 
  
 // Handles API errors
 let handleError = (error) => {
     // Check specifically for timeout errors (error.code === 3)
-    if (error.code === 3 && retries < timeoutRetries) {
+    if (error.code === 3) {
         // Code to execute when geolocation times out
         console.error("Geolocation timed out!");
 		retries++;
         
-        // Update UI to notify user
-        document.getElementById("station-header").innerText = "Location Service: ";
-        document.getElementById("station-status").innerText = "Timed out. Retrying...";
-        
-        // Retries after a delay
-        setTimeout(() => {
-            console.log("Retrying geolocation after timeout...");
-            trackLocation();
-        }, 3000); // Wait 3 seconds before retrying
+		if(retries < TIMEOUT_RETRIES) {
+			// Update UI to notify user
+			document.getElementById("station-header").innerText = "Location Service: ";
+			document.getElementById("station-status").innerText = "Timed out. Retrying...";
+			
+			// Retries after a delay
+			setTimeout(() => {
+				console.log("Retrying geolocation after timeout...");
+				trackLocation();
+			}, 3000); // Wait 3 seconds before retrying
+		}
+		else {
+			document.getElementById("station-status").innerText = "Could not fetch location data";
+		}
     } 
     // Handle other geolocation errors
     else if (error.code === 1) {
@@ -57,11 +63,12 @@ function updateLocation(position) {
 	const latitude = position.coords.latitude;
 	const longitude = position.coords.longitude;
 	const accuracy = position.coords.accuracy;
+	const speed = position.coords.speed || 0; // in m/s
 
 	fetch("/update_location", {
 		method: "POST",
 		headers: { "Content-Type": "application/json"}, 
-		body: JSON.stringify({ latitude: latitude, longitude: longitude, accuracy: accuracy })
+		body: JSON.stringify({ latitude: latitude, longitude: longitude, accuracy: accuracy, speed: speed })
 	})
 	.then(response => response.json())
 	.then(data => {
@@ -73,30 +80,6 @@ function updateLocation(position) {
 				updateNextTrainPrediction("eastbound");
 				updateNextTrainPrediction("westbound");
 				retries = 0;
-
-
-				if(isAtStation) {
-
-					if(!timer) {
-						startTimer();
-					}
-					
-					// updateNextTrainPrediction("eastbound");
-					// updateNextTrainPrediction("westbound");
-				}
-				
-				else {
-
-					if(timer) {
-						stopTimer();
-					}
-					
-					// document.getElementById("eastbound-train").innerText = "Proceed to the nearest station";
-					// document.getElementById("eastbound-train-stops").innerText = "";
-					// document.getElementById("westbound-train").innerText = "Proceed to the nearest station";
-					// document.getElementById("westbound-train-stops").innerText = "";
-				}
-
 			});
 		}
 		else {
@@ -115,7 +98,7 @@ function trackLocation() {
 		// navigator.geolocation.getCurrentPosition(updateLocation, handleError, {
 			enableHighAccuracy: true, // Precise location data
 			maximumAge: 10000, // 10 seconds cached location
-			timeout: timeout
+			timeout: TIMEOUT
 		})
 	}
 	else {
@@ -130,19 +113,30 @@ async function updateNearestStation() {
 	.then(response => response.json())
 	.then(data => {
 
-		nearest_station = data.message[1];
+		nearestStation = data.message[1];
 		
-		if(data.message[0] <= minimumDistanceThreshold) {
-			isAtStation = true;
-			document.getElementById("station-header").innerText = "Current Station: ";
+
+		// If currently at station: starts buffer for if passing,
+		// then runs function startTimer()
+		if(data.message[0] <= MINIMUM_DISTANCE_THRESHOLD) {
+
+			// Provides a buffer for when only passing 
+			// a station, to not start the timer
+			if(!timer && !timerBuffer) {
+				locationEntryTimestamp = Date.now();
+				startTimerBuffer();
+
+				document.getElementById("station-header").innerText = "Approaching Station: ";
+			}
+
 			document.getElementById("station-status").innerText = data.message[1];
 		}
+
+		// Not at station: ends timer and adds time,
+		// even if haven't boarded a train
 		else {
-			isAtStation = false;
-			
-			if(timer) {
-				stopTimer();
-			}
+			stopTimerBuffer();
+			stopTimer();
 
 			document.getElementById("station-header").innerText = `${data.message[1]}: `;
 			document.getElementById("station-status").innerText = `${Math.trunc(data.message[0])} meters away`;
@@ -150,6 +144,8 @@ async function updateNearestStation() {
 	})
 	.catch(error => console.error("Error retrieving station data:", error));
 }
+
+
 
 // Fetches and updates the nearest train predictions for next arrival
 function updateNextTrainPrediction(direction) {
@@ -180,12 +176,13 @@ function updateNextTrainPrediction(direction) {
 }
 
 
+
 // helper method: updates relevant tags for train predictions
 function update_relevant_train_prediction(direction, data) {
 	if(direction === "eastbound") {
 		if(data.message === 0) {
 			document.getElementById("eastbound-train").innerText = "Approaching ";
-			document.getElementById("eastbound-train-stops").innerText = nearest_station + "...";
+			document.getElementById("eastbound-train-stops").innerText = nearestStation + "...";
 		}
 		else {
 			document.getElementById("eastbound-train").innerText = "";
@@ -202,7 +199,7 @@ function update_relevant_train_prediction(direction, data) {
 	else if(direction === "westbound") {
 		if(data.message === 0) {
 			document.getElementById("westbound-train").innerText = "Approaching ";
-			document.getElementById("westbound-train-stops").innerText = nearest_station + "...";
+			document.getElementById("westbound-train-stops").innerText = nearestStation + "...";
 		}
 		else {
 			document.getElementById("westbound-train").innerText = "";
@@ -223,6 +220,37 @@ function update_relevant_train_prediction(direction, data) {
 
 
 
+// Does not track time when only passing a station:
+// calls startTimer() and clears itself once passing the buffer threshold
+function startTimerBuffer() {
+	if(timerBuffer) {
+		clearInterval(timerBuffer);
+	}
+
+	locationEntryTimestamp = Date.now();
+
+	timerBuffer = setInterval(() => {
+		bufferTime = Date.now() - locationEntryTimestamp;
+
+		if(bufferTime >= STATION_PASSING_THRESHOLD) {
+			startTimer();
+			stopTimerBuffer();
+			document.getElementById("station-header").innerText = "Waiting at: ";
+		}
+	}, 1000);
+}
+
+
+
+function stopTimerBuffer() {
+	if(timerBuffer) {
+		clearInterval(timerBuffer);
+		timerBuffer = null;
+		bufferTime = 0;
+	}
+}
+
+
 
 // Starts the current wait timer
 function startTimer() {
@@ -230,10 +258,10 @@ function startTimer() {
 		clearInterval(timer);
 	}
 
-	let timerStartTimestamp = Date.now() - (current_waittime * 1000);
+	let timerStartTimestamp = Date.now() - (currentWaittime * 1000);
 
 	timer = setInterval(() => {
-		current_waittime = Math.floor((Date.now() - timerStartTimestamp) / 1000);
+		currentWaittime = Math.floor((Date.now() - timerStartTimestamp) / 1000);
 		updateCurrentWaitTimeDisplay();
 	}, 1000);
 }
@@ -251,15 +279,15 @@ function stopTimer() {
 
 // Adds the time to the cumulative time counter
 function addTime() {
-	cumulative_waittime += current_waittime - waittimeThreshold;
-	current_waittime = 0;
+	cumulativeWaittime += currentWaittime - WAITTIME_THRESHOLD;
+	currentWaittime = 0;
 
-	localStorage.setItem('cumulative_waittime', cumulative_waittime);
+	localStorage.setItem('cumulative_waittime', cumulativeWaittime);
 
 	fetch('/update_cumulative_time', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ time: cumulative_waittime })
+		body: JSON.stringify({ time: cumulativeWaittime })
 	}).catch(error => console.error("Error updating server time", error));
 
 	updateCurrentWaitTimeDisplay();
@@ -273,19 +301,14 @@ function fetchCumulativeTime() {
 	fetch('/get_cumulative_time')
 		.then(response => response.json())
 		.then(data => {
-			cumulative_waittime = data.time;
+
+			cumulativeWaittime = data.time;
 			updateCumulativeWaitTimeDisplay();
 		})
 		.catch(error => {
-			
-			const savedTime = localStorage.getItem('cumulative_waittime');
-			if(savedTime !== null) {
-				cumulative_waittime = parseInt(savedTime);
 
-			}
-			else {
-				cumulative_waittime = 0;
-			}
+			const savedTime = localStorage.getItem('cumulative_waittime');
+			cumulativeWaittime = savedTime !== null ? savedTime : 0;
 
 			updateCumulativeWaitTimeDisplay();
 		})
@@ -295,30 +318,28 @@ function fetchCumulativeTime() {
 
 // Updates current time elapsed on webpage
 function updateCurrentWaitTimeDisplay() {
-	document.getElementById("current-minutes").innerText = current_waittime / 60 < 10 ? '0' + Math.floor(current_waittime / 60) : Math.floor(current_waittime / 60);
-	document.getElementById("current-ten-seconds").innerText = (Math.floor(current_waittime / 10)) % 6;
-	document.getElementById("current-seconds").innerText = current_waittime % 10;
+	document.getElementById("current-minutes").innerText = currentWaittime / 60 < 10 ? '0' + Math.floor(currentWaittime / 60) : Math.floor(currentWaittime / 60);
+	document.getElementById("current-ten-seconds").innerText = (Math.floor(currentWaittime / 10)) % 6;
+	document.getElementById("current-seconds").innerText = currentWaittime % 10;
 }
 
 
 
 // Updates cumulative wait time display
 function updateCumulativeWaitTimeDisplay() {
-	if(cumulative_waittime < 0) {
+	if(cumulativeWaittime < 0) {
 		document.getElementById("cumulative-waittime-status").innerText = "Total Time Saved: "
-		document.getElementById("cumulative-minutes").innerText = -cumulative_waittime / 60 < 10 ? '0' + Math.floor(-cumulative_waittime / 60) : Math.floor(-cumulative_waittime / 60);
-		document.getElementById("cumulative-ten-seconds").innerText = (Math.floor(-cumulative_waittime / 10)) % 6;
-		document.getElementById("cumulative-seconds").innerText = -cumulative_waittime % 10;
+		document.getElementById("cumulative-minutes").innerText = -cumulativeWaittime / 60 < 10 ? '0' + Math.floor(-cumulativeWaittime / 60) : Math.floor(-cumulativeWaittime / 60);
+		document.getElementById("cumulative-ten-seconds").innerText = (Math.floor(-cumulativeWaittime / 10)) % 6;
+		document.getElementById("cumulative-seconds").innerText = -cumulativeWaittime % 10;
 	}
 	else {
 		document.getElementById("cumulative-waittime-status").innerText = "Total Time Wasted: "
-		document.getElementById("cumulative-minutes").innerText = cumulative_waittime / 60 < 10 ? '0' + Math.floor(cumulative_waittime / 60) : Math.floor(cumulative_waittime / 60);
-		document.getElementById("cumulative-ten-seconds").innerText = (Math.floor(cumulative_waittime / 10)) % 6;
-		document.getElementById("cumulative-seconds").innerText = cumulative_waittime % 10;
+		document.getElementById("cumulative-minutes").innerText = cumulativeWaittime / 60 < 10 ? '0' + Math.floor(cumulativeWaittime / 60) : Math.floor(cumulativeWaittime / 60);
+		document.getElementById("cumulative-ten-seconds").innerText = (Math.floor(cumulativeWaittime / 10)) % 6;
+		document.getElementById("cumulative-seconds").innerText = cumulativeWaittime % 10;
 	}
 }
-
-
 
 // Matches current waittime height to the left column elements
 function matchHeight() {

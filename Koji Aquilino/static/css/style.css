@@ -27,12 +27,12 @@ h1 {
 
 /* Train direction blocks fixed height */
 .incoming-trains .border {
-    min-height: 80px; /* Set your desired minimum height */
-    height: 80px;     /* Fixed height */
+    min-height: 80px;
+    height: 80px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow: hidden; /* Prevents content from spilling out */
+	line-height: 1.2;
 }
 
 /* Synced eastbound/westbound border heights */
@@ -82,10 +82,12 @@ h1 {
 	font-weight: normal;
 }
 
-#current-station-id {
+#current-station-id, #waittime-box {
 	font-size: 27px;
 }
 
-#waittime-box {
-	font-size: 24px;
+#eastbound-train, #westbound-train, 
+#eastbound-train-stops, #westbound-train-stops {
+    margin: 0;
+    padding: 0;
 }

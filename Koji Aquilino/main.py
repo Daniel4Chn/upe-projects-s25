@@ -80,7 +80,7 @@ def update_location():
         print(f"Distance from {station.getName()}: {round(get_station_distance(latitude, longitude, station), 2)} meters")
     '''
 
-    logging.info(f"Retrieved location at {latitude}, {longitude} - Accuracy: within {data.get('accuracy')} meters")
+    logging.info(f"Retrieved location at {latitude}, {longitude} at {data.get('speed')} km/hr - Accuracy: within {data.get('accuracy')} meters")
 
     return jsonify({ "status": "success", "message": (latitude, longitude)}), 200
     
