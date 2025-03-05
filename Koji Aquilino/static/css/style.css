@@ -52,7 +52,7 @@ h1 {
 
 
 #current-location-map {
-	height: 260px;
+	height: 65vh;
 	width: 100%;
 }
 
@@ -71,6 +71,11 @@ h1 {
         padding-top: 1.5rem;
         padding-bottom: 1.5rem;
         margin-top: 2px;
+	}
+
+	#current-location-map {
+		height: 35vh;
+		width: 100%;
 	}
 }
 
