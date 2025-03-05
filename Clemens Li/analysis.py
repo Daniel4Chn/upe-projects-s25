@@ -7,6 +7,8 @@ raw_data = {}
 course_ids = []
 course_data = {}
 course_names = []
+course_num_assignments = []
+course_semesters = []
 assignments = []
 
 def get_data(connection):
@@ -16,16 +18,20 @@ def get_data(connection):
     return raw_data
 
 def categorize_data(connection):
-    global course_data, course_ids, course_names, assignments
+    global course_data, course_ids, course_names, course_num_assignments, course_semesters, assignments
     course_data.clear()
     course_ids.clear()
     course_names.clear()
+    course_num_assignments.clear()
+    course_semesters.clear()
     assignments.clear()
     course_ids = list(raw_data["student"].keys())
     course_data = raw_data["student"]
     for id in course_ids:
         assignments.append(connection.account.get_assignments(id))
         course_names.append(course_data[id].name)
+        course_num_assignments.append(course_data[id].num_assignments)
+        course_semesters.append(f"{course_data[id].semester} {course_data[id].year}")
     return assignments
 
 def get_stats(course_assignments):

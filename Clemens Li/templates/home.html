@@ -13,6 +13,13 @@
             {% for name in course_names %}
             <div class = "course-box" onclick = "window.location.href='/course/{{ loop.index0 }}'">
                 <h2> {{ name }} </h2>
+                <div class="course-box-inner">
+                    <div class="info-bar"></div>
+                    <div class="course-box-details">
+                        <p>{{ course_semesters[loop.index0] }}</p>
+                        <p>{{ course_num_assignments[loop.index0] }}</p>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>

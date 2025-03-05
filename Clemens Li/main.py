@@ -68,7 +68,7 @@ def home_screen():
     # Checking data validity
     if not an.course_names or not an.assignments:
         return redirect(url_for("index"))
-    return render_template("home.html", course_names=an.course_names, assignments=an.assignments)
+    return render_template("home.html", course_names=an.course_names, assignments=an.assignments, course_num_assignments=an.course_num_assignments, course_semesters=an.course_semesters)
 
 @app.route("/course/<int:course_index>")
 def course_screen(course_index):
