@@ -3,15 +3,18 @@ from flask import Flask, render_template, request, jsonify, abort
 # import certifi, ssl # Ensures usage of updated CA certificates for SSL connections with requests
 from Station import Station
 from datetime import datetime, timezone
+from dotenv import load_dotenv
 import geopy.distance
 import requests
 import logging
 import json
 import os
 
+load_dotenv()
+
 app = Flask(__name__)
 nearest_station_id = None
-API_KEY = os.getenv('MBTA_API_KEY')
+API_KEY = os.environ.get('MBTA_API_KEY')
 URL_STOPS = f"https://api-v3.mbta.com/stops?filter[route]=Green-B&api_key={API_KEY}"
 DATA_FILE = 'waittime_data.json' # cross-session storage solution
 # OPEN_MAP_URL = "https://nominatim.openstreetmap.org/reverse?lat=42.3489153&lon=-71.1009455&format=json&addressdetails=1"
