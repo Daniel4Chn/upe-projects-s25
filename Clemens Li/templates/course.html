@@ -5,21 +5,30 @@
     <title>{{ course_name }} - Academic Tracker</title>
 </head>
 <body >
+
+    <script>
+        time = {{ course_stats[1] }}
+    </script>
+
     <h1>{{ course_name }}</h1>
-    <div id="timer"></div>
+    <div id="timer">
+        <div class="timer-text">
+            <span class="timer-label">Next Due:</span>
+            <div class="divider"></div>
+            <span class="timer-countdown"></span>
+        </div>
+    </div>
     <div class="assignment-box">
         <h2> Average: {{ course_stats[0] }} </h2>
-        <hr class="divider">
+        <div class="divider-container">
+            <div class="divider"></div>
+        </div>
         <h3>Assignments</h3>
         <h3> ~ </h3>
         {% for assignment in course_assignments %}
             <h4> {{ assignment.name }}: {{assignment.grade}} / {{assignment.max_grade}} </h4>
         {% endfor %}
     </div>
-
-    <script>
-        time = {{ course_stats[1] }}
-    </script>
 
     <script src="../static/json/timer.js"></script>
 
