@@ -1,0 +1,94 @@
+/*
+CSS stylesheet for extra styling outside of Bootstrap.
+*/
+
+body {
+	padding-left: 12px;
+	padding-right: 12px;
+	width: auto;
+}
+
+h1 {
+	border: 2px #eee solid;
+	color: black;
+	text-align: center;
+	padding: 10px;
+}
+
+.row {
+	font-size: 20px;
+	text-align: center;
+	align-items: center;
+}
+
+.custom-header {
+	font-weight: bold !important;
+}
+
+/* Train direction blocks fixed height */
+.incoming-trains .border {
+    min-height: 80px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+	line-height: 1.2;
+}
+
+/* Synced eastbound/westbound border heights */
+.incoming-trains .col-6 {
+    display: flex;
+}
+.incoming-trains .col-6 > div {
+    width: 100%;
+}
+
+
+#title {
+	text-align: center;
+	font-weight: bold;
+}
+
+
+
+#current-location-map {
+	height: 65vh;
+	width: 100%;
+}
+
+#cumulative-waittime-row {
+	font-size: 30px !important;
+	font-weight: bold;
+}
+
+#status-bar {
+	font-size: 20px;
+}
+
+/* For mobile layout */
+@media (max-width: 767px) {
+    .waittime-box {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        margin-top: 2px;
+	}
+
+	#current-location-map {
+		height: 35vh;
+		width: 100%;
+	}
+}
+
+#station-status {
+	font-weight: normal;
+}
+
+#current-station-id, #waittime-box {
+	font-size: 22px;
+}
+
+#eastbound-train, #westbound-train, 
+#eastbound-train-stops, #westbound-train-stops {
+    margin: 0;
+    padding: 0;
+}

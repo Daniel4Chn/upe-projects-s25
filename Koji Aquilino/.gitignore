@@ -1,0 +1,13 @@
+# Python virtual environments
+.venv/
+
+# Python cache files
+*.pyc
+__pycache__/
+
+*.log
+.env
+/node_modules/
+
+# Storage file
+waittime_data.json
