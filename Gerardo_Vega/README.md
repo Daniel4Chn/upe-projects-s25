@@ -2,8 +2,9 @@
 
 📌 Project Overview
 
-This project is an AI-powered Star Constellation Identifier that allows users to upload images of the night sky and detect visible constellations. The model was trained using CNN (Convolutional Neural Networks) and predicts the most likely constellations in the image. Here is the video showing the project at work: https://drive.google.com/file/d/1RlyFRH_tp3wangy_eAg3_b9vsTvw51nZ/view?usp=sharing.
+This project is an AI-powered Star Constellation Identifier that allows users to upload images of the night sky and detect visible constellations. The model was trained using CNN (Convolutional Neural Networks) and predicts the most likely constellations in the image. Here is the video showing the project at work: https://drive.google.com/file/d/1RlyFRH_tp3wangy_eAg3_b9vsTvw51nZ/view?usp=sharing. For some reason on the video it won't show me opening and uploading images of constellations and their respective name so here are the images used in the video.
 
+ 
 🚀 Features
 
 ✅ Upload an image of the night sky and detect constellations.✅ View information about detected constellations, including facts from Wikipedia.✅ Responsive UI with React + TailwindCSS.✅ Flask API backend for image processing & AI model inference.
