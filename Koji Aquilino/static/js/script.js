@@ -99,8 +99,6 @@ function initMap() {
             className: 'user-location-marker'
 		})
 	});
-
-	console.log("success")
 }
 
 // Run on successful callback: Sends location to backend
