@@ -7,6 +7,7 @@
     scroll-behavior:smooth;
     list-style: none; /*none*/
 }
+
 header{
     position:fixed;
     top: 1rem;
@@ -22,7 +23,6 @@ header{
     padding: 0.5rem 1.5rem;
     border-radius: 3rem;
     z-index: 1000;
-    
 }
 
 .logo{
@@ -33,9 +33,8 @@ header{
     transition: 0.3s ease-in-out;   
 }
 
-
-.logo.hover{
-    transform: scale(1,1);
+.logo:hover{
+    transform: scale(1.1); /* Logo grows slightly on hover */
 }
 
 .nav-links{
@@ -48,6 +47,7 @@ li a{
     color: white;
     font-weight: 300;
 }
+
 li a::before{
     position: absolute;
     content: '';
@@ -56,13 +56,14 @@ li a::before{
     height: 5px;
     top: 25px;
     border-radius: 1rem;
-    transition: 0.3 ease-in-out;
-    background: linear-gradient(to right, #00c3ff, #8aff80);
+    transition: 0.3s ease-in-out;
+    background: linear-gradient(to right, #00c3ff, #8aff80); /* Cool blue to green gradient */
+}
 
-}
 li a:hover::before{
-    width: 100%;
+    width: 100%; /* Underline effect on hover */
 }
+
 .visit-btn{
     padding: 0.8rem 1.5rem;
     border-radius: 3rem;
@@ -73,14 +74,94 @@ li a:hover::before{
     cursor: pointer;
     text-wrap: nowrap;
     transition: 0.3s ease-in-out;
-    background: linear-gradient(to right, #00c3ff, #8aff80);
+    background: linear-gradient(to right, #00c3ff, #8aff80); /* Cool blue to green gradient */
 }
-.visit-btn:hover{
-    background: linear-gradient(to right,#8aff80,  #00c3ff);
-    transform: scale(1.03);
 
+.visit-btn:hover{
+    background: linear-gradient(to right, #8aff80, #00c3ff);
+    transform: scale(1.03);
 }
+
 #menu-icon{
     font-size: 2rem;
     display: none;
 }
+
+section{
+    min-height: 100vh;
+    padding: 8rem 12%;
+    width: 100%;
+    position: relative;
+}
+.about{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.about .about-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10rem; /* Adjust gap to your liking for the space between the image and text */
+}
+.about-container img {
+    max-width: 30vw; 
+    border-radius: 50%; 
+}
+.info-box{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem
+}
+.info-box h3{
+    font-size: 1.8rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+.info-box h1{
+    font-size: 3rem;
+    font-weight: 600;
+}
+.info-box span{
+    background: linear-gradient(to right, #00c3ff, #8aff80); /* Cool blue to green gradient */
+    background-clip: text;
+    color:transparent;
+    font-size: 2rem;
+}
+.btn-group{
+    display: flex;
+    gap: 1rem;
+}
+.btn{
+    border-radius: 3rem;
+    padding: 0.5rem 1.5rem;
+    border: 2px solid black;
+    cursor: pointer;
+    font-weight: 500;
+    text-wrap: nowrap;
+    transition: 0.2s ease-in-out
+}
+.btn:hover{
+    background: black;
+    color:white
+}
+.socials{
+    display: flex;
+    gap: 2rem;
+}
+.socials i{
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+.socials i:hover{
+    transform: scale(1,1);
+}
+
+/*
+
+
+
