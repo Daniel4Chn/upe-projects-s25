@@ -27,7 +27,9 @@ function createCalendar() {
             // Check if day has assignment due
             const currentDate = new Date(year, month, i);
 
-            if (currentDate === date) {
+            if (currentDate.getDate() === date.getDate() && 
+                currentDate.getMonth() === date.getMonth() && 
+                currentDate.getFullYear() === date.getFullYear()) {
                 dayDiv.classList.add('today');
             }
 
