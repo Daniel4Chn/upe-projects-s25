@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daniel Chan's Portfolio Website</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+</head>
+<body>
+    <!---header Section containing the navigation and logo-->
+    <header class = "header">
+        <a href="#" class="logo"><span>Daniel Chan</span></a>
+        <!---navigation links section-->
+        <i class="fa-solid fa-bars" id = "menu-icon"></i>
+        <ul class="nav-links">
+            <li>
+                <a href="#about">About</a>
+            </li>
+
+            <li>
+                <a href="#experience">Experience</a>
+            </li>
+
+            <li>
+                <a href="#projects">Projects</a>
+            </li>
+
+            <li>
+                <a href="#contact" class="btn">Contact</a>
+            </li>
+        </ul>
+        <a href="https://github.com/Daniel4Chn" target="_blank" class="visit-btn">Visit Github</a>
+    </header>
+    <section id="about", class="about">
+        <div class="about-container">
+            <img src="daniel_pic.jpg" alt="">
+
+            <div class="info-box">
+                
+                <div class="text">
+                    <h3>Hi I'm</h3>
+                    <h1>Daniel Chan</h1>
+                    <span>CS Student @Boston University '28</span>
+                </div>
+
+                <div class="btn-group">
+                    <a href="DanielResume.pdf" download class="btn">Download CV</a>
+                    <a href="#contact" class="btn">Contact</a>
+                </div>
+
+                <div class="socials">
+                    <a href="https://github.com/Daniel4Chn" target="_blank">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/daniel-chan-/" target="_blank">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="experience">
+
+        <h2 class="section-title">Experience</h2>
+
+        <div class="experience-info">
+
+            <div class="grid">
+                <div class="grid-card">
+                    <i class="fa-solid fa-code"></i>
+                    <span>Current CS Student</span>
+                    <h3>Class of 2028</h3>
+                    <p>I'm a current freshman at Boston University studying Computer Science! The CS courses I've taken up to this point include 
+                        CS 112 (Java and Data Structures), CS 131 (Discrete Math), and CS 132 (Linear Algebra). </p>
+                </div>
+
+                <div class="grid-card">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>QUERY PROGRAM</span>
+                    <h3>Jan-May 2023</h3>
+                    <p>Worked with others on a six-week research project focused on quantum mechanics, specifically the Ising model. Explored the impact of machine learning (AI)
+                         on expanding the applications of the Ising model, a foundational quantum framework for understanding molecular energy behavior.
+                        Learned about various quantum topics, such as quantum computing, entanglement, optics, etc., in 2 months with grad student mentors from Harvard and MIT</p>
+                </div>
+
+                <div class="grid-card">
+                    <i class="fa-solid fa-file"></i>
+                    <span>MD Anderson Data Science Intern</span>
+                    <h3>June - Nov 2023</h3>
+                    <p>Analyzed and visualized different types of metabolomics data to explore metabolic pathways, networks, and off-target drug effects. Used software tools like Cytoscape, mixOmics R package, and TOXcms.
+                        Worked with a cross-functional team including biologists, data analysts, and mass spectrometry experts from MD Anderson Cancer Center and Agilent Technologies, providing exposure to the workflow from experimental design to data generation to data analysis.</p>
+                </div>
+
+                <div class="grid-card">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>MD Anderson Research Intern</span>
+                    <h3>Aug 2022</h3>
+                    <p>Examined the synergistic anticancer effect of a combination of L-asparaginase and IACS10759/Metformin against UV melanoma cancer cell lines through a wet lab experiment. Cleaned raw data from the experiment and analyzed data to determine effectiveness of treatments.</p>
+                </div>
+            </div>
+            <img src="daniel_pic.jpg" alt="">
+        </div>
+    <section id="projects" class="projects">
+
+        <h2 class="section-title">Projects</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <img src="QUERY.png" alt="">
+                <h3> Predicting the Critical Temperature of the Ising Model </h3>
+                <p>Collaborated with a team of four students on a six-week research project focused on quantum mechanics, specifically the Ising model. Explored the impact of machine learning (AI) on expanding the applications of the Ising model, a foundational quantum framework for understanding molecular energy behavior.
+                </p>
+                    <div class="btn-group">
+                        
+                        <div class="btn-group">
+                            <a href="https://mudyeh.github.io/query/" class="btn" target="_blank">Github Repo</a>
+                            <a href="https://mudyeh.github.io/files/QuERY_2023_Group8.pdf" class="btn" target="_blank">Link To Poster</a>
+                        </div>
+                    </div>
+            </div>
+
+            <div class="project-card">
+                <img src="CryptoImage.jpg" alt="">
+                <h3>Crypto Webscraper</h3>
+                <p>Using Python's Beautiful Soup Library, I build a webscraper that scrapes data regarding crypto names, their price in the real time, and changes in the market over the course of a certain period of time. The data is scraped
+                    from https://coinmarketcap.com/coins/ and every time the program runs, it puts the data it scrapes into a text file for ease of access with the top 10 coins being the ones scraped</p>
+                    <div class="btn-group">
+                        <div class="btn-group">
+                            <a href="https://github.com/Daniel4Chn/CryptoScraper" class="btn" target="_blank">Github Repo</a>
+                        </div>
+                        
+                    </div>
+            </div>
+        </div>
+
+    </section>
+
+    </section>
+    <section class="contact" id="contact">
+        <div class="input-box">
+            <h2 class="section-title">Contact Me</h2>
+            <form action="https://formspree.io/f/mkgjwgkj" method="POST">
+                <div class="input">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="input">
+                    <input type="email" name="email" placeholder="example@email.com" required>
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+                <div class="input">
+                    <textarea name="message" placeholder="Your Message" required></textarea>
+                    <i class="fa-solid fa-message"></i>
+                </div>
+                <button type="submit" class="btn">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <ul>
+            <li>
+                <a href="#about">About</a>
+            </li>
+
+            <li>
+                <a href="#experience">Experience</a>
+            </li>
+            <li>
+                <a href="#projects">Projects</a>
+            </li>
+            <li>
+                <a href="#contact">Contact</a>
+            </li>
+        </ul>
+    </footer>
+    <script src = "script.js"></script>
+
+</body>
+</html>
