@@ -374,6 +374,11 @@ input[type=text]:focus {
   transition: all 0.3s ease;
 }
 
+.calendar-day.today {
+  background: var(--pop);
+  color: var(--text);
+}
+
 .calendar-day.due-date-urgent {
   background: var(--red);
   color: var(--background);

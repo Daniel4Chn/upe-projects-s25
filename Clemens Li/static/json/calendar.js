@@ -26,6 +26,11 @@ function createCalendar() {
             
             // Check if day has assignment due
             const currentDate = new Date(year, month, i);
+
+            if (currentDate === date) {
+                dayDiv.classList.add('today');
+            }
+
             if (hasAssignment(currentDate, assignments)) {
                 const days_left = Math.floor((currentDate - date) / (1000 * 60 * 60 * 24));
                 if (currentDate - date > 0) {

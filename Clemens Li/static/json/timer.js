@@ -16,9 +16,9 @@ function updateTimer() {
             `${days}d ${hours}h ${minutes}m ${seconds}s`;
 
         if (days < 1 && hours < 12) {
-            updateTimerElement.className = "timer-urgent";
+            timerElement.className = "timer-urgent";
         } else if (days < 1) {
-            updateTimerElement.className = "timer-warning2";
+            timerElement.className = "timer-warning2";
         } else if (days < 3) {
             timerElement.className = "timer-warning";
         } else {

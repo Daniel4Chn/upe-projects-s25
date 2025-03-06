@@ -35,7 +35,7 @@ def categorize_data(connection):
     return assignments
 
 def get_stats(course_assignments):
-    stats = [] # 0:average_display, 1:next_due_date, 2:average
+    stats = [] # 0:average_display, 1:next_due_date, 2:raw_average
     stats.append(average_display(average(course_assignments)))
     stats.append(next_due_date(course_assignments))
     stats.append(average(course_assignments))
