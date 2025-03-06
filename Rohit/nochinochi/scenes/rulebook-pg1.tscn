@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://b58r8081tlqi4"]
+
+[ext_resource type="Script" uid="uid://bpheei0cvkq8k" path="res://scenes/scripts/rulebook_pg_1.gd" id="1_rekux"]
+[ext_resource type="Texture2D" uid="uid://betqydf3bgjx3" path="res://textures/rulebook-1.png" id="2_50kca"]
+
+[node name="Rulebook" type="Control"]
+custom_minimum_size = Vector2(600, 800)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1652.0
+offset_bottom = 2336.0
+size_flags_vertical = 3
+script = ExtResource("1_rekux")
+
+[node name="RulebookNochiNochi" type="Sprite2D" parent="."]
+position = Vector2(959.749, 842)
+scale = Vector2(1.16113, 1.15947)
+texture = ExtResource("2_50kca")
+
+[node name="Button" type="Button" parent="RulebookNochiNochi"]
+offset_left = 640.0
+offset_top = 115.0
+offset_right = 773.0
+offset_bottom = 162.0
+theme_override_font_sizes/font_size = 21
+text = "Next Page"
+
+[connection signal="pressed" from="RulebookNochiNochi/Button" to="." method="_on_button_pressed"]
