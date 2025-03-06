@@ -7,17 +7,13 @@
 <body >
 
     <script>
-        time = {{ course_stats[1] }}
+        time = {{ course_stats[1] }} // Completely baffled by this error, spent two hours on it but everything works???? ok ig
+    </script>
+    <script id="assignments-data" type="application/json">
+        {{ course_assignments|tojson|safe }}
     </script>
 
     <h1>{{ course_name }}</h1>
-    <div id="timer">
-        <div class="timer-text">
-            <span class="timer-label">Next Due:</span>
-            <div class="divider"></div>
-            <span class="timer-countdown"></span>
-        </div>
-    </div>
     <div class="assignment-box">
         <h2> Average: {{ course_stats[0] }} </h2>
         <div class="divider-container">
@@ -29,8 +25,29 @@
             <h4> {{ assignment.name }}: {{assignment.grade}} / {{assignment.max_grade}} </h4>
         {% endfor %}
     </div>
+    <div id="timer">
+        <div class="timer-text">
+            <span class="timer-label">Next Due:</span>
+            <div class="divider"></div>
+            <span class="timer-countdown"></span>
+        </div>
+    </div>
+    <div class="calendar">
+        <h3 id="currentMonth"></h3>
+        <div class="calendar-weekdays">
+            <div class="calendar-day">Sun</div>
+            <div class="calendar-day">Mon</div>
+            <div class="calendar-day">Tue</div>
+            <div class="calendar-day">Wed</div>
+            <div class="calendar-day">Thu</div>
+            <div class="calendar-day">Fri</div>
+            <div class="calendar-day">Sat</div>
+        </div>
+        <div id="calendar-days"></div>
+    </div>
 
     <script src="../static/json/timer.js"></script>
+    <script src="../static/json/calendar.js"></script>
 
 </body>
 
