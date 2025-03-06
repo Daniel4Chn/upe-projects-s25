@@ -2,7 +2,7 @@
 # Liar's Dice
 
 ## Introduction
-This project is by Rohit Mandapati and Justin Shi We used the Godot Engine to recreate the game liar's dice. This project is almost entirely written in Godot Script (.gd), In this game, the player faces off against 4 AI players, dynamically created each game so that no game ever feels the same. Learn your opponents and figure out their patterns, learn how risky or safe they play.
+This project is by Rohit Mandapati and Justin Shi. We used the Godot Engine to recreate the game Liar's Dice. This project is almost entirely written in Godot Script (.gd), In this game, the player faces off against 4 AI players, dynamically created each game so that no game ever feels the same. Learn your opponents and figure out their patterns, learn how risky or safe they play.
 
 
 ## Gameplay
